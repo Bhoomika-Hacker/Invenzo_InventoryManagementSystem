@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InventoryManagementSystem.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20260906175533_test")]
-    partial class InitialInventory
+    [Migration("20260929081400_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -90,6 +90,65 @@ namespace InventoryManagementSystem.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("InventoryManagementSystem.Models.Billing", b =>
+                {
+                    b.Property<int>("BillingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BillingId"));
+
+                    b.Property<string>("CustomerEmail")
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<decimal>("Discount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("GrandTotal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<DateTime>("IssueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SaleId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TaxAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TaxRate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("BillingId");
+
+                    b.HasIndex("InvoiceNumber")
+                        .IsUnique();
+
+                    b.HasIndex("SaleId")
+                        .IsUnique();
+
+                    b.ToTable("Billings");
+                });
+
             modelBuilder.Entity("InventoryManagementSystem.Models.Category", b =>
                 {
                     b.Property<int>("CategoryId")
@@ -111,6 +170,45 @@ namespace InventoryManagementSystem.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("InventoryManagementSystem.Models.Payment", b =>
+                {
+                    b.Property<int>("PaymentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentId"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("BillingId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<DateTime>("PaidAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("TransactionReference")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.HasKey("PaymentId");
+
+                    b.HasIndex("BillingId");
+
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("InventoryManagementSystem.Models.Product", b =>
@@ -477,6 +575,28 @@ namespace InventoryManagementSystem.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("InventoryManagementSystem.Models.Billing", b =>
+                {
+                    b.HasOne("InventoryManagementSystem.Models.Sale", "Sale")
+                        .WithOne()
+                        .HasForeignKey("InventoryManagementSystem.Models.Billing", "SaleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Sale");
+                });
+
+            modelBuilder.Entity("InventoryManagementSystem.Models.Payment", b =>
+                {
+                    b.HasOne("InventoryManagementSystem.Models.Billing", "Billing")
+                        .WithMany("Payments")
+                        .HasForeignKey("BillingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Billing");
+                });
+
             modelBuilder.Entity("InventoryManagementSystem.Models.Product", b =>
                 {
                     b.HasOne("InventoryManagementSystem.Models.Category", "Category")
@@ -617,6 +737,11 @@ namespace InventoryManagementSystem.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("InventoryManagementSystem.Models.Billing", b =>
+                {
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("InventoryManagementSystem.Models.Category", b =>
