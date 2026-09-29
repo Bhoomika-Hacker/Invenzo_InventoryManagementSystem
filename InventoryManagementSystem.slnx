@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="InventoryManagementSystem.csproj" />
+  <Project Path="Tests/Invenzo.Tests/Invenzo.Tests.csproj" />
+</Solution>

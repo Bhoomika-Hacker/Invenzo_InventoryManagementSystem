@@ -1,0 +1,76 @@
+﻿@model InventoryManagementSystem.ViewModels.SaleItemVM
+
+@{
+    ViewData["Title"] = "Sale Item Details";
+}
+
+<h1>Sale Item Details</h1>
+
+<hr />
+
+<div>
+    <dl class="row">
+
+        <dt class="col-sm-3">
+            Sale Item ID
+        </dt>
+
+        <dd class="col-sm-9">
+            @Model.SaleItemId
+        </dd>
+
+        <dt class="col-sm-3">
+            Sale ID
+        </dt>
+
+        <dd class="col-sm-9">
+            @Model.SaleId
+        </dd>
+
+        <dt class="col-sm-3">
+            Product ID
+        </dt>
+
+        <dd class="col-sm-9">
+            @Model.ProductId
+        </dd>
+
+        <dt class="col-sm-3">
+            Quantity
+        </dt>
+
+        <dd class="col-sm-9">
+            @Model.Quantity
+        </dd>
+
+        <dt class="col-sm-3">
+            Unit Price
+        </dt>
+
+        <dd class="col-sm-9">
+            @Model.UnitPrice
+        </dd>
+
+        <dt class="col-sm-3">
+            Total Price
+        </dt>
+
+        <dd class="col-sm-9">
+            @Model.TotalPrice
+        </dd>
+
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Edit"
+       asp-route-id="@Model.SaleItemId"
+       class="btn btn-warning">
+        Edit
+    </a>
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Back to List
+    </a>
+</div>

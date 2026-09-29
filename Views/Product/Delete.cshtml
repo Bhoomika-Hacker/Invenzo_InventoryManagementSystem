@@ -1,0 +1,91 @@
+
+@model InventoryManagementSystem.ViewModels.ProductVM
+
+@{
+    ViewData["Title"] = "Delete Product";
+}
+
+<h1>Delete Product</h1>
+
+<h3 class="text-danger">
+    Are you sure you want to delete this product?
+</h3>
+
+<hr />
+
+<div>
+    <h4>Product</h4>
+
+    <dl class="row">
+
+        <dt class="col-sm-3">
+            Product Name
+        </dt>
+        <dd class="col-sm-9">
+            @Model.ProductName
+        </dd>
+
+        <dt class="col-sm-3">
+            Quantity
+        </dt>
+        <dd class="col-sm-9">
+            @Model.Quantity
+        </dd>
+
+        <dt class="col-sm-3">
+            Reorder Level
+        </dt>
+        <dd class="col-sm-9">
+            @Model.ReorderLevel
+        </dd>
+
+        <!-- Purchase Price -->
+        <dt class="col-sm-3">
+            Purchase Price
+        </dt>
+        <dd class="col-sm-9">
+            ₹@Model.PurchasePrice.ToString("N2")
+        </dd>
+
+        <!-- Selling Price -->
+        <dt class="col-sm-3">
+            Selling Price
+        </dt>
+        <dd class="col-sm-9">
+            ₹@Model.SellingPrice.ToString("N2")
+        </dd>
+
+        <dt class="col-sm-3">
+            Category ID
+        </dt>
+        <dd class="col-sm-9">
+            @Model.CategoryId
+        </dd>
+
+        <dt class="col-sm-3">
+            Supplier ID
+        </dt>
+        <dd class="col-sm-9">
+            @Model.SupplierId
+        </dd>
+
+    </dl>
+
+    <form asp-action="Delete" method="post">
+
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" asp-for="ProductId" />
+
+        <input type="submit"
+               value="Delete"
+               class="btn btn-danger" />
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+            Cancel
+        </a>
+
+    </form>
+</div>
+

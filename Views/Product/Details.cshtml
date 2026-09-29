@@ -1,0 +1,88 @@
+
+@model InventoryManagementSystem.ViewModels.ProductVM
+
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<h1>Product Details</h1>
+
+<div>
+    <h4>Product</h4>
+    <hr />
+
+    <dl class="row">
+
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.ProductName)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.ProductName)
+        </dd>
+
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Quantity)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Quantity)
+        </dd>
+
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.ReorderLevel)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.ReorderLevel)
+        </dd>
+
+        <!-- Purchase Price -->
+        <dt class="col-sm-3">
+            Purchase Price
+        </dt>
+        <dd class="col-sm-9">
+            ₹@Model.PurchasePrice.ToString("N2")
+        </dd>
+
+        <!-- Selling Price -->
+        <dt class="col-sm-3">
+            Selling Price
+        </dt>
+        <dd class="col-sm-9">
+            ₹@Model.SellingPrice.ToString("N2")
+        </dd>
+
+        <dt class="col-sm-3">
+            Category ID
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.CategoryId)
+        </dd>
+
+        <dt class="col-sm-3">
+            Supplier ID
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.SupplierId)
+        </dd>
+
+    </dl>
+</div>
+
+<div>
+
+    @* Edit - Admin only *@
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Edit"
+           asp-route-id="@Model.ProductId"
+           class="btn btn-warning">
+            Edit
+        </a>
+    }
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Back to List
+    </a>
+
+</div>
+

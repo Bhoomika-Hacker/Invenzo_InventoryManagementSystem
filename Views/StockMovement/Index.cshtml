@@ -1,0 +1,301 @@
+﻿@model IEnumerable<InventoryManagementSystem.ViewModels.StockMovementVM>
+
+@{
+    ViewData["Title"] = "Stock Movements";
+}
+
+<div class="container-fluid py-4 stock-movement-page">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div class="d-flex align-items-center gap-3">
+
+            <div class="stock-page-icon">
+                📦
+            </div>
+
+            <div>
+                <h2 class="mb-1">Stock Movements</h2>
+
+                <p class="text-muted mb-0">
+                    Track all stock in and stock out activities
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Summary -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="stock-summary-card">
+
+                <div class="summary-icon">
+                    📊
+                </div>
+
+                <div>
+                    <div class="summary-label">
+                        Total Movements
+                    </div>
+
+                    <div class="summary-value">
+                        @Model.Count()
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="stock-summary-card">
+
+                <div class="summary-icon">
+                    📥
+                </div>
+
+                <div>
+                    <div class="summary-label">
+                        Stock In
+                    </div>
+
+                    <div class="summary-value">
+                        @Model.Count(x => x.MovementType == "IN")
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="stock-summary-card">
+
+                <div class="summary-icon">
+                    📤
+                </div>
+
+                <div>
+                    <div class="summary-label">
+                        Stock Out
+                    </div>
+
+                    <div class="summary-value">
+                        @Model.Count(x => x.MovementType == "OUT")
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Stock Movement Table -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white py-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+                    <h5 class="mb-1">
+                        📋 Movement History
+                    </h5>
+
+                    <small class="text-muted">
+                        Complete stock movement records
+                    </small>
+                </div>
+
+                <span class="badge bg-primary">
+                    @Model.Count() Records
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th class="ps-4">
+                                    Movement ID
+                                </th>
+
+                                <th>
+                                    Product ID
+                                </th>
+
+                                <th>
+                                    Movement Type
+                                </th>
+
+                                <th>
+                                    Quantity
+                                </th>
+
+                                <th>
+                                    Movement Date
+                                </th>
+
+                                <th>
+                                    Reference
+                                </th>
+
+                                <th class="text-center">
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+
+                                    <!-- Movement ID -->
+
+                                    <td class="ps-4">
+
+                                        <span class="fw-semibold">
+                                            #@item.StockMovementId
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Product -->
+
+                                    <td>
+
+                                        <span class="product-id-badge">
+                                            📦 @item.ProductId
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Movement Type -->
+
+                                    <td>
+
+                                        @if (item.MovementType == "IN")
+                                        {
+                                            <span class="movement-badge movement-in">
+                                                📥 IN
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="movement-badge movement-out">
+                                                📤 OUT
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Quantity -->
+
+                                    <td>
+
+                                        <span class="quantity-value">
+                                            @item.Quantity
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Date -->
+
+                                    <td>
+                                        📅 @item.MovementDate.ToString("dd-MM-yyyy")
+                                    </td>
+
+
+                                    <!-- Reference -->
+
+                                    <td>
+
+                                        <span class="reference-text">
+                                            @(string.IsNullOrEmpty(item.Reference)
+                                                ? "-"
+                                                : item.Reference)
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Details Only -->
+
+                                    <td class="text-center">
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@item.StockMovementId"
+                                           class="btn btn-sm btn-outline-primary">
+
+                                            👁️ Details
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <div class="empty-stock-state">
+
+                    <div class="empty-stock-icon">
+                        📦
+                    </div>
+
+                    <h5>
+                        No Stock Movements Found
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        There are no stock movement records available.
+                    </p>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

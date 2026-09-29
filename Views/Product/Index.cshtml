@@ -1,0 +1,265 @@
+
+@model IEnumerable<InventoryManagementSystem.ViewModels.ProductVM>
+
+@{
+    ViewData["Title"] = "Products";
+}
+
+<div class="product-page">
+
+    <!-- Page Header -->
+    <div class="product-page-header">
+
+        <div>
+            <h1>Products</h1>
+            <p>Manage your inventory products and stock levels.</p>
+        </div>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create"
+               class="product-create-btn">
+                <span>+</span>
+                Create New Product
+            </a>
+        }
+
+    </div>
+
+
+    <!-- Product Card -->
+    <div class="product-table-card">
+
+        <div class="product-table-header">
+
+            <div>
+                <h2>Product List</h2>
+                <p>All products available in your inventory</p>
+            </div>
+
+            <div class="product-count">
+                @Model.Count() Products
+            </div>
+
+        </div>
+
+
+        @if (!Model.Any())
+        {
+            <!-- Empty State -->
+
+            <div class="product-empty-state">
+
+                <div class="product-empty-icon">
+                    📦
+                </div>
+
+                <h3>No Products Found</h3>
+
+                <p>
+                    There are no products available in your inventory.
+                </p>
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Create"
+                       class="product-create-btn empty-create-btn">
+                        <span>+</span>
+                        Create Your First Product
+                    </a>
+                }
+
+            </div>
+        }
+        else
+        {
+            <!-- Product Table -->
+
+            <div class="product-table-wrapper">
+
+                <table class="product-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Product</th>
+
+                            <th>Quantity</th>
+
+                            <th>Reorder Level</th>
+
+                            <th>Purchase Price</th>
+
+                            <th>Selling Price</th>
+
+                            <th>Category</th>
+
+                            <th>Supplier</th>
+
+                            <th>Actions</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <!-- Product -->
+
+                                <td>
+
+                                    <div class="product-info">
+
+                                        <div class="product-icon">
+                                            📦
+                                        </div>
+
+                                        <div class="product-details">
+
+                                            <strong>
+                                                @item.ProductName
+                                            </strong>
+
+                                            <span>
+                                                Product #@item.ProductId
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Quantity -->
+
+                                <td>
+
+                                    @if (item.Quantity <= item.ReorderLevel)
+                                    {
+                                        <span class="quantity-badge quantity-low">
+                                            @item.Quantity
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="quantity-badge quantity-normal">
+                                            @item.Quantity
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- Reorder Level -->
+
+                                <td>
+
+                                    <span class="reorder-badge">
+                                        @item.ReorderLevel
+                                    </span>
+
+                                </td>
+
+
+                                <!-- Purchase Price -->
+
+                                <td>
+
+                                    <span class="product-price">
+                                        ₹@item.PurchasePrice.ToString("N2")
+                                    </span>
+
+                                </td>
+
+
+                                <!-- Selling Price -->
+
+                                <td>
+
+                                    <span class="product-price">
+                                        ₹@item.SellingPrice.ToString("N2")
+                                    </span>
+
+                                </td>
+
+
+                                <!-- Category -->
+
+                                <td>
+
+                                    <span class="product-reference-badge">
+                                        Category #@item.CategoryId
+                                    </span>
+
+                                </td>
+
+
+                                <!-- Supplier -->
+
+                                <td>
+
+                                    <span class="product-reference-badge supplier-badge">
+                                        Supplier #@item.SupplierId
+                                    </span>
+
+                                </td>
+
+
+                                <!-- Actions -->
+
+                                <td>
+
+                                    <div class="product-actions">
+
+                                        <!-- Details -->
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@item.ProductId"
+                                           class="product-action-btn details-btn">
+                                            Details
+                                        </a>
+
+
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <!-- Edit -->
+
+                                            <a asp-action="Edit"
+                                               asp-route-id="@item.ProductId"
+                                               class="product-action-btn edit-btn">
+                                                Edit
+                                            </a>
+
+
+                                            <!-- Delete -->
+
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.ProductId"
+                                               class="product-action-btn delete-btn">
+                                                Delete
+                                            </a>
+                                        }
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</div>

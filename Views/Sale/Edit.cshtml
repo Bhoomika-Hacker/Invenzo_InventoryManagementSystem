@@ -1,0 +1,794 @@
+
+@model InventoryManagementSystem.ViewModels.SaleVM
+
+@{
+    ViewData["Title"] = "Edit Sale";
+
+    var products = ViewBag.Products as IEnumerable<InventoryManagementSystem.Models.Product>
+                   ?? new List<InventoryManagementSystem.Models.Product>();
+
+    var saleItems = Model.SaleItems?.ToList()
+                    ?? new List<InventoryManagementSystem.ViewModels.SaleItemVM>();
+}
+
+<div class="container-fluid py-4 sale-edit-page">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div class="d-flex align-items-center gap-3">
+
+            <div class="sale-page-icon">
+                ✏️
+            </div>
+
+            <div>
+                <h2 class="fw-bold mb-1">
+                    Edit Sale
+                </h2>
+
+                <p class="text-muted mb-0">
+                    Update sale details, products and quantities.
+                </p>
+            </div>
+
+        </div>
+
+        <a asp-action="Index"
+           class="btn btn-outline-secondary">
+            ← Back to Sales
+        </a>
+
+    </div>
+
+
+    <form asp-action="Edit"
+          asp-route-id="@Model.SaleId"
+          method="post">
+
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" asp-for="SaleId" />
+
+
+        <!-- Validation -->
+        <div asp-validation-summary="ModelOnly"
+             class="alert alert-danger"
+             role="alert">
+        </div>
+
+
+        <!-- Sale Information -->
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header bg-white py-3">
+
+                <h5 class="mb-0 fw-semibold">
+                    🧾 Sale Information
+                </h5>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-md-5 col-lg-4">
+
+                        <label asp-for="SaleDate"
+                               class="form-label fw-semibold">
+                            Sale Date
+                        </label>
+
+                        <input asp-for="SaleDate"
+                               type="datetime-local"
+                               class="form-control" />
+
+                        <span asp-validation-for="SaleDate"
+                              class="text-danger small">
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Sale Items -->
+        <div class="card shadow-sm border-0">
+
+            <div class="card-header bg-white py-3
+                        d-flex justify-content-between
+                        align-items-center">
+
+                <div>
+
+                    <h5 class="mb-1 fw-semibold">
+                        📦 Sale Items
+                    </h5>
+
+                    <small class="text-muted">
+                        Update the products and quantities in this sale.
+                    </small>
+
+                </div>
+
+
+                <button type="button"
+                        class="btn btn-success"
+                        id="addItemBtn">
+                    + Add Product
+                </button>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <!-- Items Table -->
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0"
+                           id="saleItemsTable">
+
+                        <thead class="table-dark">
+
+                            <tr>
+
+                                <th>Product</th>
+
+                                <th>Available Stock</th>
+
+                                <th>Quantity</th>
+
+                                <th>Selling Price</th>
+
+                                <th>Total Price</th>
+
+                                <th>Action</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="saleItemsBody">
+
+                            @for (int i = 0; i < saleItems.Count; i++)
+                            {
+                                var item = saleItems[i];
+
+                                var product = products
+                                    .FirstOrDefault(
+                                        p => p.ProductId == item.ProductId);
+
+
+                                <tr>
+
+                                    <!-- Product -->
+                                    <td>
+
+                                        <select name="SaleItems[@i].ProductId"
+                                                class="form-select product-select"
+                                                required>
+
+                                            <option value="">
+                                                -- Select Product --
+                                            </option>
+
+
+                                            @foreach (var p in products)
+                                            {
+                                                if (p.ProductId == item.ProductId)
+                                                {
+                                                    <option value="@p.ProductId"
+                                                            data-stock="@p.Quantity"
+                                                            data-selling-price="@p.SellingPrice"
+                                                            selected>
+
+                                                        @p.ProductName
+
+                                                    </option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@p.ProductId"
+                                                            data-stock="@p.Quantity"
+                                                            data-selling-price="@p.SellingPrice">
+
+                                                        @p.ProductName
+
+                                                    </option>
+                                                }
+                                            }
+
+                                        </select>
+
+                                    </td>
+
+
+                                    <!-- Available Stock -->
+                                    <td>
+
+                                        <input type="text"
+                                               class="form-control stock-field bg-light"
+                                               value="@(product?.Quantity ?? 0)"
+                                               readonly />
+
+                                    </td>
+
+
+                                    <!-- Quantity -->
+                                    <td>
+
+                                        <input type="number"
+                                               name="SaleItems[@i].Quantity"
+                                               class="form-control quantity-field"
+                                               value="@item.Quantity"
+                                               data-original-quantity="@item.Quantity"
+                                               min="1"
+                                               required />
+
+                                        <div class="text-danger small stock-validation-message" role="alert"></div>
+
+                                    </td>
+
+
+                                    <!-- Selling Price -->
+                                    <td>
+
+                                        <div class="input-group">
+
+                                            <span class="input-group-text">
+                                                ₹
+                                            </span>
+
+                                            <input type="number"
+                                                   name="SaleItems[@i].UnitPrice"
+                                                   class="form-control price-field bg-light"
+                                                   value="@(product?.SellingPrice ?? item.UnitPrice)"
+                                                   min="0.01"
+                                                   step="0.01"
+                                                   readonly />
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- Total Price -->
+                                    <td>
+
+                                        <div class="input-group">
+
+                                            <span class="input-group-text">
+                                                ₹
+                                            </span>
+
+                                            <input type="number"
+                                                   name="SaleItems[@i].TotalPrice"
+                                                   class="form-control total-field bg-light"
+                                                   value="@item.TotalPrice"
+                                                   step="0.01"
+                                                   readonly />
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- Remove -->
+                                    <td>
+
+                                        <button type="button"
+                                                class="btn btn-outline-danger btn-sm remove-btn">
+
+                                            Remove
+
+                                        </button>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- Grand Total -->
+                <div class="row justify-content-end mt-4">
+
+                    <div class="col-md-5 col-lg-4">
+
+                        <div class="grand-total-card">
+
+                            <label class="form-label fw-semibold">
+                                💰 Grand Total
+                            </label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+                                    ₹
+                                </span>
+
+                                <input asp-for="TotalAmount"
+                                       id="grandTotal"
+                                       class="form-control fw-bold"
+                                       readonly />
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Footer -->
+            <div class="card-footer bg-white
+                        border-top
+                        d-flex justify-content-end
+                        gap-2 py-3">
+
+                <a asp-action="Index"
+                   class="btn btn-outline-secondary px-4">
+                    Cancel
+                </a>
+
+                <button type="submit"
+                        class="btn btn-primary px-4">
+                    💾 Update Sale
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+
+        // Initial item index
+        let itemIndex = @saleItems.Count;
+
+
+        // Products from database
+        const products = @Html.Raw(
+            System.Text.Json.JsonSerializer.Serialize(products)
+        );
+
+
+        // Add Product Button
+        document.getElementById("addItemBtn")
+            .addEventListener("click", function () {
+
+                addItemRow();
+
+            });
+
+
+        // Add New Product Row
+        function addItemRow() {
+
+            const tbody =
+                document.getElementById("saleItemsBody");
+
+            const row =
+                document.createElement("tr");
+
+
+            row.innerHTML = `
+
+                <td>
+
+                    <select
+                        name="SaleItems[${itemIndex}].ProductId"
+                        class="form-select product-select"
+                        required>
+
+                        <option value="">
+                            -- Select Product --
+                        </option>
+
+                        ${products.map(p => `
+
+                            <option
+                                value="${p.ProductId}"
+                                data-stock="${p.Quantity}"
+                                data-selling-price="${p.SellingPrice}">
+
+                                ${p.ProductName}
+
+                            </option>
+
+                        `).join("")}
+
+                    </select>
+
+                </td>
+
+
+                <td>
+
+                    <input
+                        type="text"
+                        class="form-control stock-field bg-light"
+                        readonly />
+
+                </td>
+
+
+                <td>
+
+                    <input
+                        type="number"
+                        name="SaleItems[${itemIndex}].Quantity"
+                        class="form-control quantity-field"
+                        min="1"
+                        required />
+
+                </td>
+
+
+                <td>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">
+                            ₹
+                        </span>
+
+                        <input
+                            type="number"
+                            name="SaleItems[${itemIndex}].UnitPrice"
+                            class="form-control price-field bg-light"
+                            min="0.01"
+                            step="0.01"
+                            readonly />
+
+                    </div>
+
+                </td>
+
+
+                <td>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">
+                            ₹
+                        </span>
+
+                        <input
+                            type="number"
+                            name="SaleItems[${itemIndex}].TotalPrice"
+                            class="form-control total-field bg-light"
+                            step="0.01"
+                            readonly />
+
+                    </div>
+
+                </td>
+
+
+                <td>
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-danger btn-sm remove-btn">
+
+                        Remove
+
+                    </button>
+
+                </td>
+
+            `;
+
+
+            tbody.appendChild(row);
+
+            itemIndex++;
+
+            attachEvents(row);
+
+        }
+
+
+        // Attach Events
+        function attachEvents(row) {
+
+            const productSelect =
+                row.querySelector(".product-select");
+
+            const quantityField =
+                row.querySelector(".quantity-field");
+
+            const stockField =
+                row.querySelector(".stock-field");
+
+            const priceField =
+                row.querySelector(".price-field");
+
+            const totalField =
+                row.querySelector(".total-field");
+
+            const removeButton =
+                row.querySelector(".remove-btn");
+
+
+            // Product Change
+            productSelect.addEventListener(
+                "change",
+                function () {
+
+                    const option =
+                        productSelect.options[
+                            productSelect.selectedIndex
+                        ];
+
+
+                    if (!option.value) {
+
+                        stockField.value = "";
+
+                        quantityField.value = "";
+
+                        priceField.value = "";
+
+                        totalField.value = "";
+
+                        quantityField.removeAttribute("max");
+
+                        quantityField.setCustomValidity("");
+
+                        calculateGrandTotal();
+
+                        return;
+
+                    }
+
+
+                    const stock =
+                        parseInt(
+                            option.dataset.stock
+                        ) || 0;
+
+
+                    const sellingPrice =
+                        parseFloat(
+                            option.dataset.sellingPrice
+                        ) || 0;
+
+
+                    stockField.value = stock;
+
+                    quantityField.max = stock;
+
+                    priceField.value =
+                        sellingPrice.toFixed(2);
+
+
+                    validateQuantity();
+
+                    calculateTotal();
+
+                }
+            );
+
+
+            // Quantity Change
+            quantityField.addEventListener(
+                "input",
+                function () {
+
+                    validateQuantity();
+
+                    calculateTotal();
+
+                }
+            );
+
+
+            // Validate Quantity
+            function validateQuantity() {
+
+                const stock =
+                    parseInt(stockField.value) || 0;
+
+                const quantity =
+                    parseInt(quantityField.value) || 0;
+
+
+                if (quantity > stock) {
+
+                    quantityField.setCustomValidity(
+                        "Quantity cannot exceed available stock."
+                    );
+
+                }
+                else {
+
+                    quantityField.setCustomValidity("");
+
+                }
+
+            }
+
+
+            // Remove Row
+            removeButton.addEventListener(
+                "click",
+                function () {
+
+                    row.remove();
+
+                    calculateGrandTotal();
+
+                }
+            );
+
+
+            // Calculate Item Total
+            function calculateTotal() {
+
+                const quantity =
+                    parseFloat(
+                        quantityField.value
+                    ) || 0;
+
+
+                const price =
+                    parseFloat(
+                        priceField.value
+                    ) || 0;
+
+
+                const total =
+                    quantity * price;
+
+
+                totalField.value =
+                    total.toFixed(2);
+
+
+                calculateGrandTotal();
+
+            }
+
+
+            // Existing Row Initialization
+            const selectedOption =
+                productSelect.options[
+                    productSelect.selectedIndex
+                ];
+
+
+            if (selectedOption &&
+                selectedOption.value) {
+
+                const stock =
+                    parseInt(
+                        selectedOption.dataset.stock
+                    ) || 0;
+
+
+                const sellingPrice =
+                    parseFloat(
+                        selectedOption.dataset.sellingPrice
+                    ) || 0;
+
+
+                stockField.value = stock;
+
+                quantityField.max = stock;
+
+                priceField.value =
+                    sellingPrice.toFixed(2);
+
+                calculateTotal();
+
+            }
+
+        }
+
+
+        // Grand Total
+        function calculateGrandTotal() {
+
+            let total = 0;
+
+
+            document
+                .querySelectorAll(".total-field")
+                .forEach(function (field) {
+
+                    total +=
+                        parseFloat(field.value) || 0;
+
+                });
+
+
+            document.getElementById("grandTotal")
+                .value =
+                total.toFixed(2);
+
+        }
+
+
+        // Existing Rows
+        document
+            .querySelectorAll("#saleItemsBody tr")
+            .forEach(function (row) {
+
+                attachEvents(row);
+
+            });
+
+
+        // Initial Grand Total
+        calculateGrandTotal();
+
+        // Validate total requested stock per product before submitting.
+        document.querySelector("form")?.addEventListener("submit", function (event) {
+            const requested = {};
+            let hasError = false;
+
+            this.querySelectorAll("#saleItemsBody .product-select").forEach(function (select) {
+                const productId = select.value;
+                const quantity = parseInt(select.closest("tr").querySelector(".quantity-field").value) || 0;
+                if (productId) requested[productId] = (requested[productId] || 0) + quantity;
+            });
+
+            this.querySelectorAll("#saleItemsBody .product-select").forEach(function (select) {
+                const row = select.closest("tr");
+                const option = select.options[select.selectedIndex];
+                const currentStock = parseInt(option?.dataset.stock || "0") || 0;
+                const restoredStock = Array.from(
+                    document.querySelectorAll("#saleItemsBody .product-select")
+                ).reduce(function (sum, otherSelect) {
+                    if (otherSelect.value !== select.value) return sum;
+                    const originalQuantity = parseInt(
+                        otherSelect.closest("tr").querySelector(".quantity-field").dataset.originalQuantity || "0"
+                    ) || 0;
+                    return sum + originalQuantity;
+                }, 0);
+                const stock = currentStock + restoredStock;
+                const quantityField = row.querySelector(".quantity-field");
+                const message = row.querySelector(".stock-validation-message");
+
+                if (requested[select.value] > stock) {
+                    const text = `Stock is less. Available stock: ${stock}. Total requested: ${requested[select.value]}.`;
+                    quantityField.setCustomValidity(text);
+                    if (message) message.textContent = text;
+                    hasError = true;
+                }
+            });
+
+            if (hasError) {
+                event.preventDefault();
+                this.reportValidity();
+            }
+        });
+
+    </script>
+}

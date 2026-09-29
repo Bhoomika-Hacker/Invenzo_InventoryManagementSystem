@@ -1,0 +1,76 @@
+﻿@model InventoryManagementSystem.ViewModels.StockMovementVM
+
+@{
+    ViewData["Title"] = "Stock Movement Details";
+}
+
+<h1>Stock Movement Details</h1>
+
+<hr />
+
+<div>
+    <dl class="row">
+
+        <dt class="col-sm-3">
+            Movement ID
+        </dt>
+
+        <dd class="col-sm-9">
+            @Model.StockMovementId
+        </dd>
+
+        <dt class="col-sm-3">
+            Product ID
+        </dt>
+
+        <dd class="col-sm-9">
+            @Model.ProductId
+        </dd>
+
+        <dt class="col-sm-3">
+            Movement Type
+        </dt>
+
+        <dd class="col-sm-9">
+            @Model.MovementType
+        </dd>
+
+        <dt class="col-sm-3">
+            Quantity
+        </dt>
+
+        <dd class="col-sm-9">
+            @Model.Quantity
+        </dd>
+
+        <dt class="col-sm-3">
+            Movement Date
+        </dt>
+
+        <dd class="col-sm-9">
+            @Model.MovementDate.ToString("dd-MM-yyyy")
+        </dd>
+
+        <dt class="col-sm-3">
+            Remarks
+        </dt>
+
+        <dd class="col-sm-9">
+            @Model.Reference
+        </dd>
+
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Edit"
+       asp-route-id="@Model.StockMovementId"
+       class="btn btn-warning">
+        Edit
+    </a>
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Back to List
+    </a>
+</div>

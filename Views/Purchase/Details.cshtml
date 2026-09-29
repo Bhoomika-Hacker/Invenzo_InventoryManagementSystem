@@ -1,0 +1,60 @@
+﻿@model InventoryManagementSystem.ViewModels.PurchaseVM
+
+@{
+    ViewData["Title"] = "Purchase Details";
+}
+
+<h1>Purchase Details</h1>
+
+<hr />
+
+<div>
+    <dl class="row">
+
+        <dt class="col-sm-3">
+            Purchase ID
+        </dt>
+
+        <dd class="col-sm-9">
+            @Model.PurchaseId
+        </dd>
+
+        <dt class="col-sm-3">
+            Supplier ID
+        </dt>
+
+        <dd class="col-sm-9">
+            @Model.SupplierId
+        </dd>
+
+        <dt class="col-sm-3">
+            Purchase Date
+        </dt>
+
+        <dd class="col-sm-9">
+            @Model.PurchaseDate.ToString("dd-MM-yyyy")
+        </dd>
+
+        <dt class="col-sm-3">
+            Total Amount
+        </dt>
+
+        <dd class="col-sm-9">
+            @Model.TotalAmount
+        </dd>
+
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Edit"
+       asp-route-id="@Model.PurchaseId"
+       class="btn btn-warning">
+        Edit
+    </a>
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Back to List
+    </a>
+</div>

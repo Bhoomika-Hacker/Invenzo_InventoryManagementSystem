@@ -1,0 +1,188 @@
+@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="auth-page reference-login-page">
+
+    <!-- =====================================================
+         LEFT SIDE
+    ====================================================== -->
+
+    <div class="auth-left reference-login-visual" aria-label="Invenzo inventory management">
+        <div class="reference-login-left-overlay">
+            <span class="reference-pill">INVENZO • INVENTORY MADE SIMPLE</span>
+            <h1>Manage Smarter.<br /><span>Grow Faster.</span></h1>
+            <p>Manage products, suppliers, sales and inventory from one powerful platform.</p>
+        </div>
+    </div>
+
+
+    <div class="auth-right">
+
+        <div class="auth-card">
+
+
+            <!-- REGISTER LINK -->
+            <div class="auth-card-top">
+
+                <span>
+                    New here?
+                </span>
+
+                <a asp-page="./Register"
+                   asp-route-returnUrl="@Model.ReturnUrl">
+                    Register
+                </a>
+
+            </div>
+
+
+            <!-- LOGO -->
+            <div class="auth-card-logo">
+                ◇
+            </div>
+
+
+            <!-- HEADING -->
+            <h2>
+                Welcome Back
+            </h2>
+
+            <p class="auth-card-subtitle">
+                Login to your Invenzo account
+            </p>
+
+
+            <!-- =================================================
+                 LOGIN FORM
+            ================================================== -->
+
+            <form id="account"
+                  method="post"
+                  class="auth-form">
+
+
+                <!-- VALIDATION -->
+                <div asp-validation-summary="ModelOnly"
+                     class="auth-validation"
+                     role="alert">
+                </div>
+
+
+                <!-- EMAIL -->
+                <div class="auth-form-group">
+
+                    <label asp-for="Input.Email">
+                        Email
+                    </label>
+
+                    <div class="auth-input-wrapper">
+
+                        <span class="auth-input-icon">
+                            ✉
+                        </span>
+
+                        <input asp-for="Input.Email"
+                               autocomplete="username"
+                               aria-required="true"
+                               placeholder="name@example.com" />
+
+                    </div>
+
+                    <span asp-validation-for="Input.Email"
+                          class="auth-field-error">
+                    </span>
+
+                </div>
+
+
+                <!-- PASSWORD -->
+                <div class="auth-form-group">
+
+                    <label asp-for="Input.Password">
+                        Password
+                    </label>
+
+                    <div class="auth-input-wrapper">
+
+                        <span class="auth-input-icon">
+                            🔒
+                        </span>
+
+                        <input asp-for="Input.Password"
+                               autocomplete="current-password"
+                               aria-required="true"
+                               placeholder="Enter your password" />
+
+                    </div>
+
+                    <span asp-validation-for="Input.Password"
+                          class="auth-field-error">
+                    </span>
+
+                </div>
+
+
+                <!-- REMEMBER ME -->
+                <div class="auth-options reference-login-options">
+                    <label class="remember-option">
+                        <input asp-for="Input.RememberMe" />
+                        <span>Remember me</span>
+                    </label>
+                    <a asp-page="./ForgotPassword" class="forgot-password-link">Forgot Password?</a>
+                </div>
+
+
+                <!-- LOGIN BUTTON -->
+                <button id="login-submit"
+                        type="submit"
+                        class="auth-submit">
+
+                    Login
+
+                </button>
+
+
+                <!-- CREATE ACCOUNT -->
+                <div class="auth-bottom-text">
+
+                    New here?
+
+                    <a asp-page="./Register"
+                       asp-route-returnUrl="@Model.ReturnUrl">
+
+                        Create an account
+
+                    </a>
+
+                </div>
+
+
+                <!-- SECURITY -->
+                <div class="auth-security">
+
+                    <span>
+                        🔒
+                    </span>
+
+                    Your information is secure and protected.
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+}

@@ -1,0 +1,720 @@
+
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using InventoryManagementSystem.Models
+@model InventoryManagementSystem.ViewModels.PurchaseVM
+
+@{
+    ViewData["Title"] = "Create Purchase";
+
+    var products = ViewBag.Products as IEnumerable<Product>
+                   ?? new List<Product>();
+}
+
+<div class="purchase-form-page">
+
+    <!-- =========================
+         PAGE HEADER
+    ========================== -->
+
+    <div class="purchase-form-header">
+
+        <div class="purchase-form-title">
+
+            <div class="purchase-form-title-icon">
+                🛒
+            </div>
+
+            <div>
+                <h1>Create Purchase</h1>
+
+                <p>
+                    Add a new purchase and update your inventory stock.
+                </p>
+            </div>
+
+        </div>
+
+        <a asp-action="Index"
+           class="purchase-back-btn">
+
+            ← Back to Purchases
+
+        </a>
+
+    </div>
+
+
+    <!-- =========================
+         MAIN FORM CARD
+    ========================== -->
+
+    <div class="purchase-form-card">
+
+        <form asp-action="Create"
+              method="post">
+
+            <!-- Validation -->
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger purchase-validation">
+            </div>
+
+
+            <!-- =========================
+                 PURCHASE INFORMATION
+            ========================== -->
+
+            <div class="purchase-form-section">
+
+                <div class="purchase-section-heading">
+
+                    <div class="purchase-section-icon">
+                        ℹ
+                    </div>
+
+                    <div>
+                        <h2>Purchase Information</h2>
+
+                        <p>
+                            Select the supplier and purchase date.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="purchase-info-grid">
+
+                    <!-- Supplier -->
+
+                    <div class="purchase-field">
+
+                        <label asp-for="SupplierId">
+                            Supplier
+                        </label>
+
+                        <select asp-for="SupplierId"
+                                class="purchase-input"
+                                asp-items="@(new SelectList(
+                                                                ViewBag.Suppliers,
+                                                                "SupplierId",
+                                                                "SupplierName"))">
+
+                            <option value="">
+                                -- Select Supplier --
+                            </option>
+
+                        </select>
+
+                        <span asp-validation-for="SupplierId"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <!-- Purchase Date -->
+
+                    <div class="purchase-field">
+
+                        <label asp-for="PurchaseDate">
+                            Purchase Date
+                        </label>
+
+                        <input asp-for="PurchaseDate"
+                               type="date"
+                               class="purchase-input" />
+
+                        <span asp-validation-for="PurchaseDate"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 PURCHASE ITEMS
+            ========================== -->
+
+            <div class="purchase-form-section">
+
+                <div class="purchase-section-heading purchase-items-heading">
+
+                    <div class="purchase-section-icon">
+                        📦
+                    </div>
+
+                    <div>
+                        <h2>Purchase Items</h2>
+
+                        <p>
+                            Add the products included in this purchase.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <!-- ITEMS TABLE -->
+
+                <div class="purchase-items-wrapper">
+
+                    <table class="purchase-items-table"
+                           id="purchaseItemsTable">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Product</th>
+
+                                <th>Quantity</th>
+
+                                <th>Purchase Price</th>
+
+                                <th>Total Price</th>
+
+                                <th>Action</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="itemsBody">
+
+                            <!-- FIRST ROW -->
+
+                            <tr class="purchase-item-row">
+
+                                <!-- Product -->
+
+                                <td>
+
+                                    <select name="PurchaseItems[0].ProductId"
+                                            class="purchase-item-input product-select"
+                                            required>
+
+                                        <option value="">
+                                            -- Select Product --
+                                        </option>
+
+                                        @foreach (var product in products)
+                                        {
+                                            <option value="@product.ProductId"
+                                                    data-price="@product.PurchasePrice">
+
+                                                @product.ProductName
+
+                                            </option>
+                                        }
+
+                                    </select>
+
+                                </td>
+
+
+                                <!-- Quantity -->
+
+                                <td>
+
+                                    <input name="PurchaseItems[0].Quantity"
+                                           type="number"
+                                           min="0"
+                                           value="1"
+                                           class="purchase-item-input quantity"
+                                           required />
+
+                                    <span class="text-danger small purchase-quantity-error" role="alert"></span>
+
+                                </td>
+
+
+                                <!-- Purchase Price -->
+
+                                <td>
+
+                                    <div class="price-input-wrapper">
+
+                                        <span>₹</span>
+
+                                        <input name="PurchaseItems[0].UnitPrice"
+                                               type="number"
+                                               min="0.01"
+                                               step="0.01"
+                                               class="purchase-item-input unit-price"
+                                               readonly />
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Total -->
+
+                                <td>
+
+                                    <div class="price-input-wrapper">
+
+                                        <span>₹</span>
+
+                                        <input name="PurchaseItems[0].TotalPrice"
+                                               type="number"
+                                               class="purchase-item-input total-price"
+                                               readonly />
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Remove -->
+
+                                <td>
+
+                                    <button type="button"
+                                            class="purchase-remove-btn remove-item">
+
+                                        × Remove
+
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- ADD PRODUCT -->
+
+                <button type="button"
+                        id="addItem"
+                        class="purchase-add-item-btn">
+
+                    <span>+</span>
+                    Add Product
+
+                </button>
+
+            </div>
+
+
+            <!-- =========================
+                 GRAND TOTAL
+            ========================== -->
+
+            <div class="purchase-total-section">
+
+                <div class="purchase-total-content">
+
+                    <div>
+
+                        <span class="purchase-total-label">
+                            Grand Total
+                        </span>
+
+                        <p>
+                            Total value of this purchase
+                        </p>
+
+                    </div>
+
+
+                    <div class="purchase-grand-total">
+
+                        <span>₹</span>
+
+                        <input asp-for="TotalAmount"
+                               id="grandTotal"
+                               class="purchase-total-input"
+                               readonly />
+
+                    </div>
+
+                </div>
+
+                <span asp-validation-for="TotalAmount"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+
+            <!-- =========================
+                 FORM BUTTONS
+            ========================== -->
+
+            <div class="purchase-form-footer">
+
+                <a asp-action="Index"
+                   class="purchase-cancel-btn">
+
+                    Cancel
+
+                </a>
+
+                <button type="submit"
+                        class="purchase-submit-btn">
+
+                    ✓ Create Purchase
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+
+    <script>
+
+        let itemIndex = 1;
+
+
+        // =========================
+        // ADD PRODUCT
+        // =========================
+
+        document.getElementById("addItem")
+            .addEventListener("click", function () {
+
+                let tbody =
+                    document.getElementById("itemsBody");
+
+                let row =
+                    document.createElement("tr");
+
+                row.className =
+                    "purchase-item-row";
+
+                row.innerHTML = `
+
+                    <td>
+
+                        <select name="PurchaseItems[${itemIndex}].ProductId"
+                                class="purchase-item-input product-select"
+                                required>
+
+                            <option value="">
+                                -- Select Product --
+                            </option>
+
+                            @foreach (var product in products)
+                            {
+                                    <option value="@product.ProductId"
+                    data-price="@product.PurchasePrice">
+
+                                            @product.ProductName
+
+                                    </option>
+                            }
+
+                        </select>
+
+                    </td>
+
+
+                    <td>
+
+                        <input name="PurchaseItems[${itemIndex}].Quantity"
+                               type="number"
+                               min="0"
+                               value="1"
+                               class="purchase-item-input quantity"
+                               required />
+
+                        <span class="text-danger small purchase-quantity-error" role="alert"></span>
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="price-input-wrapper">
+
+                            <span>₹</span>
+
+                            <input name="PurchaseItems[${itemIndex}].UnitPrice"
+                                   type="number"
+                                   min="0.01"
+                                   step="0.01"
+                                   class="purchase-item-input unit-price"
+                                   readonly />
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="price-input-wrapper">
+
+                            <span>₹</span>
+
+                            <input name="PurchaseItems[${itemIndex}].TotalPrice"
+                                   type="number"
+                                   class="purchase-item-input total-price"
+                                   readonly />
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <button type="button"
+                                class="purchase-remove-btn remove-item">
+
+                            × Remove
+
+                        </button>
+
+                    </td>
+
+                `;
+
+                tbody.appendChild(row);
+
+                itemIndex++;
+
+            });
+
+
+        // =========================
+        // PRODUCT SELECT
+        // =========================
+
+        document.addEventListener("change", function (event) {
+
+            if (event.target.classList.contains("product-select")) {
+
+                let productSelect =
+                    event.target;
+
+                let row =
+                    productSelect.closest(
+                        ".purchase-item-row"
+                    );
+
+                let selectedOption =
+                    productSelect.options[
+                        productSelect.selectedIndex
+                    ];
+
+                let unitPrice =
+                    row.querySelector(".unit-price");
+
+                let quantity =
+                    row.querySelector(".quantity");
+
+                let totalPrice =
+                    row.querySelector(".total-price");
+
+
+                if (!selectedOption.value) {
+
+                    unitPrice.value = "";
+                    totalPrice.value = "";
+
+                    calculateGrandTotal();
+
+                    return;
+                }
+
+
+                // Get Product Purchase Price
+
+                let price =
+                    parseFloat(
+                        selectedOption.dataset.price
+                    ) || 0;
+
+
+                // Set Purchase Price
+
+                unitPrice.value =
+                    price.toFixed(2);
+
+
+                // Calculate Total
+
+                let qty =
+                    parseFloat(quantity.value) || 0;
+
+                totalPrice.value =
+                    (qty * price).toFixed(2);
+
+
+                calculateGrandTotal();
+
+            }
+
+        });
+
+
+        // =========================
+        // QUANTITY CHANGE
+        // =========================
+
+        document.addEventListener("input", function (event) {
+
+            if (event.target.classList.contains("quantity")) {
+
+                let row =
+                    event.target.closest(
+                        ".purchase-item-row"
+                    );
+
+                calculateRowTotal(row);
+
+            }
+
+        });
+
+
+        // =========================
+        // PURCHASE QUANTITY VALIDATION
+        // =========================
+
+        document.addEventListener("input", function (event) {
+            if (event.target.classList.contains("quantity")) {
+                const quantity = parseInt(event.target.value);
+                const error = event.target.closest(".purchase-item-row")?.querySelector(".purchase-quantity-error");
+
+                if (Number.isNaN(quantity) || quantity < 0) {
+                    event.target.setCustomValidity("Purchase quantity must be greater than or equal to 0.");
+                    if (error) error.textContent = "Quantity must be greater than or equal to 0.";
+                } else {
+                    event.target.setCustomValidity("");
+                    if (error) error.textContent = "";
+                }
+            }
+        });
+
+        // =========================
+        // CALCULATE ROW TOTAL
+        // =========================
+
+        function calculateRowTotal(row) {
+
+            let quantity =
+                parseFloat(
+                    row.querySelector(".quantity").value
+                ) || 0;
+
+            let unitPrice =
+                parseFloat(
+                    row.querySelector(".unit-price").value
+                ) || 0;
+
+            let total =
+                quantity * unitPrice;
+
+
+            row.querySelector(".total-price").value =
+                total.toFixed(2);
+
+
+            calculateGrandTotal();
+
+        }
+
+
+        // =========================
+        // GRAND TOTAL
+        // =========================
+
+        function calculateGrandTotal() {
+
+            let total = 0;
+
+            document
+                .querySelectorAll(".total-price")
+                .forEach(function (input) {
+
+                    total +=
+                        parseFloat(input.value) || 0;
+
+                });
+
+
+            document.getElementById("grandTotal").value =
+                total.toFixed(2);
+
+        }
+
+
+        // =========================
+        // REMOVE PRODUCT
+        // =========================
+
+        document.addEventListener("click", function (event) {
+
+            if (event.target.classList.contains("remove-item")) {
+
+                let rows =
+                    document.querySelectorAll(
+                        ".purchase-item-row"
+                    );
+
+
+                if (rows.length > 1) {
+
+                    event.target
+                        .closest(".purchase-item-row")
+                        .remove();
+
+                    calculateGrandTotal();
+
+                }
+
+            }
+
+        });
+
+        document.querySelector("form")?.addEventListener("submit", function (event) {
+            let invalid = false;
+
+            this.querySelectorAll(".quantity").forEach(function (field) {
+                const quantity = parseInt(field.value);
+                const error = field.closest(".purchase-item-row")?.querySelector(".purchase-quantity-error");
+
+                if (Number.isNaN(quantity) || quantity < 0) {
+                    field.setCustomValidity("Purchase quantity must be greater than or equal to 0.");
+                    if (error) error.textContent = "Quantity must be greater than or equal to 0.";
+                    invalid = true;
+                } else {
+                    field.setCustomValidity("");
+                    if (error) error.textContent = "";
+                }
+            });
+
+            if (invalid) {
+                event.preventDefault();
+                this.reportValidity();
+            }
+        });
+
+    </script>
+}

@@ -1,0 +1,105 @@
+@model IEnumerable<InventoryManagementSystem.ViewModels.CategoryVM>
+
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<div class="category-page">
+
+    <!-- Header -->
+    <div class="category-page-header">
+
+        <h1>Categories</h1>
+
+        <a asp-action="Create"
+           class="category-create-btn">
+            + Create New Category
+        </a>
+
+    </div>
+
+
+    <!-- Category Table -->
+    <div class="category-table-card">
+
+        <div class="category-table-wrapper">
+
+            <table class="category-table">
+
+                <thead>
+                    <tr>
+                        <th>Category Name</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+
+                            <td>
+                                <div class="category-name">
+
+                                    <div class="category-icon">
+                                        ≡
+                                    </div>
+
+                                    <strong>
+                                        @item.CategoryName
+                                    </strong>
+
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="category-description">
+                                    @item.Description
+                                </span>
+                            </td>
+
+                            <td>
+
+                                <div class="category-actions">
+
+                                    <!-- Details -->
+                                    <a asp-action="Details"
+                                       asp-route-id="@item.CategoryId"
+                                       class="btn btn-info">
+                                        Details
+                                    </a>
+
+                                    <!-- Admin Only -->
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <a asp-action="Edit"
+                                           asp-route-id="@item.CategoryId"
+                                           class="btn btn-warning">
+                                            Edit
+                                        </a>
+
+                                        <a asp-action="Delete"
+                                           asp-route-id="@item.CategoryId"
+                                           class="btn btn-danger">
+                                            Delete
+                                        </a>
+                                    }
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

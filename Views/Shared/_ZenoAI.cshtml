@@ -1,0 +1,11 @@
+@if (User.Identity?.IsAuthenticated == true && (User.IsInRole("Admin") || User.IsInRole("Seller")))
+{
+<div class="zeno-widget" id="zenoWidget">
+<button class="zeno-launcher" id="zenoLauncher" type="button">✦ ZenoAI</button>
+<div class="zeno-panel">
+<div class="zeno-head"><div><strong>ZenoAI</strong><span>Invenzo intelligent assistant</span></div><button id="zenoClose" type="button">×</button></div>
+<div class="zeno-messages" id="zenoMessages"><div class="zeno-msg bot">Hi! I'm ZenoAI 👋<br>Ask about stock, stock movement, sales, products, categories, suppliers, billing, payments, paid/unpaid counts, payment methods, or ask me to generate a report.</div></div>
+<div class="zeno-suggestions"><button type="button" data-q="How many products are there?">Products</button><button type="button" data-q="How many sales are there?">Sales</button><button type="button" data-q="How many categories are there and what are their names?">Categories</button><button type="button" data-q="Show stock movement summary">Stock movement</button><button type="button" data-q="How many payments are done and how many are pending?">Payments</button><button type="button" data-q="How many suppliers are there and what are their names?">Suppliers</button><button type="button" data-q="Show billing overview">Billing</button><button type="button" data-q="Generate purchase report">Purchase Excel</button><button type="button" data-q="Generate overall report">Overall report</button></div>
+<form id="zenoForm" class="zeno-form">@Html.AntiForgeryToken()<input id="zenoInput" name="message" placeholder="Ask ZenoAI..." autocomplete="off"><button type="submit">➤</button></form>
+</div></div>
+}

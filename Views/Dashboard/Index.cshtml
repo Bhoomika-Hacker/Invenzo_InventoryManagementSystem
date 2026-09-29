@@ -1,0 +1,179 @@
+@model InventoryManagementSystem.ViewModels.DashboardVM
+
+@{
+    ViewData["Title"] = "Dashboard";
+    ViewData["HideSearch"] = true;
+
+    var totalProductTypes = Math.Max(Model.TotalProducts, 1);
+    var inPct = (Model.InStockProducts * 100.0 / totalProductTypes);
+    var lowPct = (Model.LowStockProductsCount * 100.0 / totalProductTypes);
+    var outPct = (Model.OutOfStockProducts * 100.0 / totalProductTypes);
+
+    var maxSales = Model.MonthlySales.Any() ? Math.Max(Model.MonthlySales.Max(x => x.Amount), 1) : 1;
+    var chartWidth = 720.0;
+    var chartHeight = 250.0;
+    var chartLeft = 45.0;
+    var chartRight = 12.0;
+    var chartTop = 20.0;
+    var chartBottom = 38.0;
+    var usableWidth = chartWidth - chartLeft - chartRight;
+    var usableHeight = chartHeight - chartTop - chartBottom;
+    var points = Model.MonthlySales.Select((item, index) =>
+    {
+        var x = Model.MonthlySales.Count() <= 1 ? chartLeft : chartLeft + (usableWidth * index / (Model.MonthlySales.Count() - 1));
+        var y = chartTop + usableHeight - ((double)item.Amount / (double)maxSales * usableHeight);
+        return $"{x:0.##},{y:0.##}";
+    }).ToList();
+    var pointString = string.Join(" ", points);
+}
+
+<div class="dashboard-page modern-dashboard">
+    <div class="dashboard-header">
+        <div>
+            <h1>Welcome back, @(User.IsInRole("Admin") ? "Admin" : "Seller")! 👋</h1>
+            <p>Here's what's happening with your inventory today.</p>
+        </div>
+        <div class="dashboard-header-right">
+            <div class="dashboard-date"><span class="date-icon">📅</span><span>@DateTime.Now.ToString("dddd, dd MMMM yyyy")</span></div>
+            <div class="theme-toggle-wrap" title="Toggle light / dark mode">
+                <span class="theme-toggle-icon icon-sun">☀️</span>
+                <label class="theme-switch">
+                    <input type="checkbox" id="themeToggle" />
+                    <span class="slider"></span>
+                </label>
+                <span class="theme-toggle-icon icon-moon">🌙</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Keep exactly the six existing dashboard cards. -->
+    <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon blue">📦</div><div class="stat-info"><span>Total Products</span><strong>@Model.TotalProducts</strong></div><div class="stat-arrow">↗</div></div>
+        <div class="stat-card"><div class="stat-icon green">🗂️</div><div class="stat-info"><span>Total Categories</span><strong>@Model.TotalCategories</strong></div><div class="stat-arrow">↗</div></div>
+        <div class="stat-card"><div class="stat-icon purple">🚚</div><div class="stat-info"><span>Total Suppliers</span><strong>@Model.TotalSuppliers</strong></div><div class="stat-arrow">↗</div></div>
+        <div class="stat-card"><div class="stat-icon orange">🛒</div><div class="stat-info"><span>Total Purchases</span><strong>@Model.TotalPurchases</strong></div><div class="stat-arrow">↗</div></div>
+        <div class="stat-card"><div class="stat-icon pink">💰</div><div class="stat-info"><span>Total Sales</span><strong>@Model.TotalSales</strong></div><div class="stat-arrow">↗</div></div>
+        <div class="stat-card low-stock-card"><div class="stat-icon red">⚠️</div><div class="stat-info"><span>Low Stock</span><strong>@Model.LowStockCount</strong></div><div class="stat-arrow">!</div></div>
+    </div>
+
+    <!-- Dashboard body redesigned to match the supplied reference image. -->
+    <div class="dashboard-visual-grid">
+        <div class="dashboard-card visual-card stock-overview-card">
+            <div class="visual-card-header">
+                <div><h2>Stock Overview</h2><p>Current inventory health</p></div>
+                <a asp-controller="Product" asp-action="Index" class="view-all">View Details →</a>
+            </div>
+            <div class="stock-overview-body">
+                <div class="donut-wrap">
+                    <div class="stock-donut" style="--in:@inPct%; --low:@lowPct%; --out:@outPct%;"></div>
+                    <div class="donut-center"><strong>@Model.TotalProducts</strong><span>Products</span></div>
+                </div>
+                <div class="stock-legend">
+                    <div><span class="legend-dot in"></span><b>In Stock</b><strong>@Model.InStockProducts</strong><small>@inPct.ToString("0")%</small></div>
+                    <div><span class="legend-dot low"></span><b>Low Stock</b><strong>@Model.LowStockProductsCount</strong><small>@lowPct.ToString("0")%</small></div>
+                    <div><span class="legend-dot out"></span><b>Out of Stock</b><strong>@Model.OutOfStockProducts</strong><small>@outPct.ToString("0")%</small></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-card visual-card sales-chart-card">
+            <div class="visual-card-header">
+                <div><h2>Monthly Sales</h2><p>Sales value for the last six months</p></div>
+                <a asp-controller="Report" asp-action="Index" class="view-all">View Reports →</a>
+            </div>
+            <div class="sales-chart-wrap">
+                <div class="chart-y-labels"><span>₹@(maxSales.ToString("N0"))</span><span>₹@((maxSales * .75m).ToString("N0"))</span><span>₹@((maxSales * .50m).ToString("N0"))</span><span>₹@((maxSales * .25m).ToString("N0"))</span><span>₹0</span></div>
+                <svg class="sales-chart" viewBox="0 0 @chartWidth @chartHeight" role="img" aria-label="Monthly sales chart">
+                    @for (var grid = 0; grid <= 4; grid++)
+                    {
+                        var y = chartTop + usableHeight - (usableHeight * grid / 4.0);
+                        <line x1="@chartLeft" y1="@y" x2="@(chartWidth - chartRight)" y2="@y" class="chart-grid-line" />
+                    }
+                    @if (Model.MonthlySales.Any())
+                    {
+                        var areaPoints = $"{chartLeft},{chartTop + usableHeight} {pointString} {chartWidth - chartRight},{chartTop + usableHeight}";
+                        <polygon points="@areaPoints" class="sales-area" />
+                        <polyline points="@pointString" class="sales-line" fill="none" />
+                        @foreach (var item in Model.MonthlySales.Select((value, index) => new { value, index }))
+                        {
+                            var x = Model.MonthlySales.Count() <= 1 ? chartLeft : chartLeft + (usableWidth * item.index / (Model.MonthlySales.Count() - 1));
+                            var y = chartTop + usableHeight - ((double)item.value.Amount / (double)maxSales * usableHeight);
+                            <circle cx="@x" cy="@y" r="5" class="sales-point" />
+                        }
+                    }
+                </svg>
+                <div class="chart-month-labels">
+                    @foreach (var item in Model.MonthlySales)
+                    {
+                        <span>@item.Label</span>
+                    }
+                </div>
+                <div class="chart-highlight">₹@(Model.MonthlySales.LastOrDefault()?.Amount.ToString("N0") ?? "0")</div>
+            </div>
+        </div>
+
+        <div class="dashboard-card insight-card">
+            <div class="insight-illustration"><img src="~/images/better-insights.png" alt="Better insights and reports" /></div>
+            <h2>Better Insights<br />Smarter Decisions</h2>
+            <p>Track inventory, boost efficiency and grow your business with live Invenzo data.</p>
+            <a asp-controller="Report" asp-action="Index" class="insight-button">View Reports →</a>
+        </div>
+    </div>
+
+    <div class="dashboard-lower-grid">
+        <div class="dashboard-card lower-card">
+            <div class="section-header"><div><h2>Top Selling Products</h2><p>Best performing products by units sold</p></div><a asp-controller="Sale" asp-action="Index" class="view-all">View All →</a></div>
+            @if (!Model.TopSellingProducts.Any())
+            {
+                <div class="empty-state"><div>📊</div><p>No sales data available yet.</p></div>
+            }
+            else
+            {
+                <div class="top-products-list">
+                    @{ var rank = 1; }
+                    @foreach (var product in Model.TopSellingProducts)
+                    {
+                        <div class="top-product-row"><span class="product-rank">@rank</span><span class="product-avatar">📦</span><div class="top-product-info"><strong>@product.ProductName</strong><span>@product.UnitsSold units</span></div><strong class="top-product-revenue">₹@product.Revenue.ToString("N0")</strong></div>
+                        rank++;
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="dashboard-card lower-card">
+            <div class="section-header"><div><h2>Low Stock Alerts</h2><p>Products needing attention</p></div><a asp-controller="Product" asp-action="LowStock" class="view-all">View All →</a></div>
+            @if (!Model.LowStockProducts.Any())
+            {
+                <div class="success-box"><span>✓</span><div><strong>Inventory looks healthy.</strong><p>No products currently require restocking.</p></div></div>
+            }
+            else
+            {
+                <div class="table-wrapper"><table class="dashboard-table compact-table"><thead><tr><th>Product</th><th>Current Stock</th><th>Reorder Level</th></tr></thead><tbody>
+                    @foreach (var product in Model.LowStockProducts)
+                    {
+                        <tr><td><div class="product-name"><div class="product-mini-icon">📦</div><strong>@product.ProductName</strong></div></td><td><span class="quantity-danger">@product.Quantity</span></td><td>@product.ReorderLevel</td></tr>
+                    }
+                </tbody></table></div>
+            }
+        </div>
+
+        <div class="dashboard-card lower-card activity-card">
+            <div class="section-header"><div><h2>Recent Activities</h2><p>Latest inventory events</p></div><span class="view-all">View All →</span></div>
+            @if (!Model.RecentActivities.Any())
+            {
+                <div class="empty-state"><div>🔔</div><p>No recent activities found.</p></div>
+            }
+            else
+            {
+                <div class="activity-list">
+                    @foreach (var activity in Model.RecentActivities)
+                    {
+                        <div class="activity-row"><span class="activity-icon">@activity.Icon</span><div class="activity-copy"><strong>@activity.Title</strong><span>@activity.Detail</span></div><small>@activity.Date.ToString("dd MMM")</small></div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="dashboard-health-banner"><div class="health-icon">✓</div><div><strong>Keep Your Inventory Healthy</strong><p>Set reorder levels, review stock movement and keep low-stock products under control.</p></div><a asp-controller="Product" asp-action="Index">Manage Inventory →</a></div>
+</div>

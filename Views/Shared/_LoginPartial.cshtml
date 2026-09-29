@@ -1,0 +1,98 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using InventoryManagementSystem.Data
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="login-user-area">
+
+        <!-- Avatar -->
+
+        <div class="login-user-avatar">
+            @if (User.Identity?.Name != null)
+            {
+                @User.Identity.Name.Substring(0, 1).ToUpper()
+            }
+            else
+            {
+                <span>U</span>
+            }
+        </div>
+
+
+        <!-- User Information -->
+
+        <div class="login-user-info">
+
+            <span class="login-user-name">
+                @User.Identity?.Name
+            </span>
+
+
+            @if (User.IsInRole("Admin"))
+            {
+                <span class="login-user-role">
+                    Administrator
+                </span>
+            }
+            else if (User.IsInRole("Seller"))
+            {
+                <span class="login-user-role">
+                    Seller
+                </span>
+            }
+
+        </div>
+
+
+        <!-- Logout -->
+
+        <form asp-area="Identity"
+              asp-page="/Account/Logout"
+              method="post"
+              class="logout-form">
+
+            <button type="submit"
+                    class="logout-button"
+                    title="Logout">
+
+                <span class="logout-icon">
+                    ↪
+                </span>
+
+                <span>
+                    Logout
+                </span>
+
+            </button>
+
+        </form>
+
+    </div>
+}
+else
+{
+    <div class="login-buttons">
+
+        <a asp-area="Identity"
+           asp-page="/Account/Register"
+           class="register-button">
+
+            Register
+
+        </a>
+
+
+        <a asp-area="Identity"
+           asp-page="/Account/Login"
+           class="login-button">
+
+            Login
+
+        </a>
+
+    </div>
+}

@@ -1,0 +1,116 @@
+@{
+    ViewData["Title"] = "Invenzo - Smart Inventory Management";
+    Layout = "~/Views/Shared/_LandingLayout.cshtml";
+}
+
+<div class="reference-landing" aria-label="Invenzo Smart Inventory Management landing page">
+    <img class="reference-landing-image"
+         src="~/images/landing/invenzo-reference-home.png"
+         alt="Invenzo Smart Inventory Management landing page" />
+
+    <!-- Transparent interactive hotspots preserve the exact reference artwork while keeping navigation functional. -->
+    <nav class="reference-hotspots" aria-label="Landing page navigation">
+        <a class="hotspot hotspot-home" asp-controller="Home" asp-action="Index" aria-label="Home"></a>
+        <a class="hotspot hotspot-features" href="#features" aria-label="Features"></a>
+        <a class="hotspot hotspot-about" href="#about" aria-label="About"></a>
+        <a class="hotspot hotspot-contact" href="#contact" aria-label="Contact"></a>
+        <a class="hotspot hotspot-login" asp-area="Identity" asp-page="/Account/Login" aria-label="Login"></a>
+        <a class="hotspot hotspot-started" asp-area="Identity" asp-page="/Account/Login" aria-label="Get Started"></a>
+        <a class="hotspot hotspot-hero-started" asp-area="Identity" asp-page="/Account/Login" aria-label="Get Started"></a>
+        <a class="hotspot hotspot-products" asp-area="Identity" asp-page="/Account/Login" aria-label="Products"></a>
+        <a class="hotspot hotspot-sales" asp-area="Identity" asp-page="/Account/Login" aria-label="Sales"></a>
+        <a class="hotspot hotspot-stock" asp-area="Identity" asp-page="/Account/Login" aria-label="Stock"></a>
+        <a class="hotspot hotspot-reports" asp-area="Identity" asp-page="/Account/Login" aria-label="Reports"></a>
+    </nav>
+
+</div>
+
+<section id="features" class="landing-section features-section">
+    <div class="section-shell">
+        <div class="section-kicker">INVENZO FEATURES</div>
+        <h2>Everything you need to manage inventory smarter.</h2>
+        <p class="section-lead">Keep products, stock, sales, suppliers, purchases, billing and payments organised in one professional workspace.</p>
+        <div class="feature-grid">
+            <a class="feature-card" asp-area="Identity" asp-page="/Account/Login">
+                <span class="feature-icon blue">▣</span>
+                <span><strong>Products</strong><small>Manage your product catalogue, prices and stock information.</small></span>
+                <span class="feature-arrow">→</span>
+            </a>
+            <a class="feature-card" asp-area="Identity" asp-page="/Account/Login">
+                <span class="feature-icon green">▥</span>
+                <span><strong>Sales</strong><small>Track sales activity and keep your business performance visible.</small></span>
+                <span class="feature-arrow">→</span>
+            </a>
+            <a class="feature-card" asp-area="Identity" asp-page="/Account/Login">
+                <span class="feature-icon orange">□</span>
+                <span><strong>Stock</strong><small>Monitor stock levels and spot low-stock items quickly.</small></span>
+                <span class="feature-arrow">→</span>
+            </a>
+            <a class="feature-card" asp-area="Identity" asp-page="/Account/Login">
+                <span class="feature-icon purple">▤</span>
+                <span><strong>Reports</strong><small>Turn inventory data into useful reports and insights.</small></span>
+                <span class="feature-arrow">→</span>
+            </a>
+            <a class="feature-card" asp-area="Identity" asp-page="/Account/Login">
+                <span class="feature-icon blue">♙</span>
+                <span><strong>Suppliers</strong><small>Keep supplier details organised and easy to access.</small></span>
+                <span class="feature-arrow">→</span>
+            </a>
+            <a class="feature-card" asp-area="Identity" asp-page="/Account/Login">
+                <span class="feature-icon green">+</span>
+                <span><strong>Purchases</strong><small>Record purchases and keep replenishment under control.</small></span>
+                <span class="feature-arrow">→</span>
+            </a>
+            <a class="feature-card" asp-area="Identity" asp-page="/Account/Login">
+                <span class="feature-icon orange">₹</span>
+                <span><strong>Billing</strong><small>Keep invoices and billing information in one place.</small></span>
+                <span class="feature-arrow">→</span>
+            </a>
+            <a class="feature-card" asp-area="Identity" asp-page="/Account/Login">
+                <span class="feature-icon purple">✓</span>
+                <span><strong>Payments</strong><small>Track payment records and stay on top of pending amounts.</small></span>
+                <span class="feature-arrow">→</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<section id="about" class="landing-section about-section">
+    <div class="section-shell about-layout">
+        <div>
+            <div class="section-kicker">ABOUT INVENZO</div>
+            <h2>One platform for your complete inventory workflow.</h2>
+            <p>Invenzo connects everyday inventory operations into a single system. Instead of moving between disconnected tools, your team can manage products, suppliers, purchases, sales, billing, payments and reports from one place.</p>
+            <p>The result is a cleaner workflow, better visibility and faster decisions as your business grows.</p>
+            <div class="about-pills">
+                <span>Inventory</span><span>Products</span><span>Sales</span><span>Purchases</span><span>Billing</span><span>Payments</span><span>Analytics</span><span>ZenoAI</span>
+            </div>
+        </div>
+        <div class="about-panel">
+            <div class="about-stat"><strong>01</strong><span>Centralised inventory management</span></div>
+            <div class="about-stat"><strong>02</strong><span>Connected sales and purchase workflows</span></div>
+            <div class="about-stat"><strong>03</strong><span>Clear reports and business insights</span></div>
+            <div class="about-stat"><strong>04</strong><span>Professional, secure workspace</span></div>
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="landing-section contact-section">
+    <div class="section-shell contact-layout">
+        <div>
+            <div class="section-kicker">CONTACT</div>
+            <h2>Let's make your inventory work smarter.</h2>
+            <p>Have a question about Invenzo? Reach out to the team or sign in to continue using your inventory workspace.</p>
+        </div>
+        <div class="contact-card">
+            <div><span>PRODUCT</span><strong>Invenzo Smart Inventory Management</strong></div>
+            <div><span>SUPPORT</span><a href="mailto:invenzo.support@example.com">invenzo.support@example.com</a></div>
+            <a class="contact-button" href="mailto:invenzo.support@example.com?subject=Invenzo%20Support">Contact Invenzo →</a>
+        </div>
+    </div>
+</section>
+
+<section class="landing-cta">
+    <div><span>READY TO GET STARTED?</span><h2>Manage smarter. Grow faster.</h2></div>
+    <a asp-area="Identity" asp-page="/Account/Login">Get Started →</a>
+</section>

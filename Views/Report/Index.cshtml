@@ -1,0 +1,776 @@
+﻿@using System.Linq
+@model InventoryManagementSystem.ViewModels.ReportVM
+
+@{
+    ViewData["Title"] = "Reports";
+}
+
+<div class="container-fluid py-4 report-page">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div class="d-flex align-items-center gap-3">
+
+            <div class="report-page-icon">
+                📊
+            </div>
+
+            <div>
+                <h2 class="mb-1">Reports</h2>
+
+                <p class="text-muted mb-0">
+                    View sales, purchases, stock and stock movement reports.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUMMARY CARDS -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="report-summary-card">
+
+                <div class="report-summary-icon">
+                    💰
+                </div>
+
+                <div>
+                    <div class="report-summary-label">
+                        Total Sales
+                    </div>
+
+                    <div class="report-summary-value">
+                        @Model.Sales.Count()
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="report-summary-card">
+
+                <div class="report-summary-icon">
+                    🛒
+                </div>
+
+                <div>
+                    <div class="report-summary-label">
+                        Total Purchases
+                    </div>
+
+                    <div class="report-summary-value">
+                        @Model.Purchases.Count()
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="report-summary-card">
+
+                <div class="report-summary-icon">
+                    📦
+                </div>
+
+                <div>
+                    <div class="report-summary-label">
+                        Total Products
+                    </div>
+
+                    <div class="report-summary-value">
+                        @Model.Products.Count()
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-xl-3 col-md-6">
+
+            <div class="report-summary-card">
+
+                <div class="report-summary-icon">
+                    ⚠️
+                </div>
+
+                <div>
+                    <div class="report-summary-label">
+                        Low Stock
+                    </div>
+
+                    <div class="report-summary-value">
+                        @Model.LowStockProducts.Count()
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- DATE FILTER -->
+    <div class="card shadow-sm border-0 mb-4 report-card">
+
+        <div class="card-header bg-white py-3">
+
+            <h5 class="mb-1">
+                🔎 Filter Reports
+            </h5>
+
+            <small class="text-muted">
+                Select a date range to filter sales, purchases and stock movements.
+            </small>
+
+        </div>
+
+        <div class="card-body">
+
+            <form asp-controller="Report"
+                  asp-action="Index"
+                  method="get">
+
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-md-4">
+
+                        <label for="fromDate"
+                               class="form-label fw-semibold">
+
+                            From Date
+
+                        </label>
+
+                        <input type="date"
+                               id="fromDate"
+                               name="fromDate"
+                               class="form-control"
+                               value="@(Model.FromDate?.ToString("yyyy-MM-dd"))" />
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <label for="toDate"
+                               class="form-label fw-semibold">
+
+                            To Date
+
+                        </label>
+
+                        <input type="date"
+                               id="toDate"
+                               name="toDate"
+                               class="form-control"
+                               value="@(Model.ToDate?.ToString("yyyy-MM-dd"))" />
+
+                    </div>
+
+
+                    <div class="col-md-4 d-flex gap-2">
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            🔍 Apply Filter
+
+                        </button>
+
+                        <a asp-controller="Report"
+                           asp-action="Index"
+                           class="btn btn-outline-secondary">
+
+                            ↻ Clear
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- SALES REPORT -->
+    <div class="card shadow-sm border-0 mb-4 report-card">
+
+        <div class="card-header bg-white py-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <h5 class="mb-1">
+                        💰 Sales Report
+                    </h5>
+
+                    <small class="text-muted">
+                        Sales recorded during the selected period
+                    </small>
+
+                </div>
+
+                <span class="badge bg-primary">
+                    @Model.Sales.Count() Records
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            @if (!Model.Sales.Any())
+            {
+                <div class="report-empty-state">
+
+                    <div class="report-empty-icon">
+                        💰
+                    </div>
+
+                    <h6>No Sales Found</h6>
+
+                    <p class="text-muted mb-0">
+                        No sales found for the selected period.
+                    </p>
+
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+                                <th class="ps-4">Sale ID</th>
+                                <th>Date</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var sale in Model.Sales)
+                            {
+                                <tr>
+
+                                    <td class="ps-4 fw-semibold">
+                                        #@sale.SaleId
+                                    </td>
+
+                                    <td>
+                                        📅 @sale.SaleDate.ToString("dd-MM-yyyy")
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+
+    <!-- PURCHASE REPORT -->
+    <div class="card shadow-sm border-0 mb-4 report-card">
+
+        <div class="card-header bg-white py-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <h5 class="mb-1">
+                        🛒 Purchase Report
+                    </h5>
+
+                    <small class="text-muted">
+                        Purchases recorded during the selected period
+                    </small>
+
+                </div>
+
+                <span class="badge bg-primary">
+                    @Model.Purchases.Count() Records
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            @if (!Model.Purchases.Any())
+            {
+                <div class="report-empty-state">
+
+                    <div class="report-empty-icon">
+                        🛒
+                    </div>
+
+                    <h6>No Purchases Found</h6>
+
+                    <p class="text-muted mb-0">
+                        No purchases found for the selected period.
+                    </p>
+
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+                                <th class="ps-4">Purchase ID</th>
+                                <th>Date</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var purchase in Model.Purchases)
+                            {
+                                <tr>
+
+                                    <td class="ps-4 fw-semibold">
+                                        #@purchase.PurchaseId
+                                    </td>
+
+                                    <td>
+                                        📅 @purchase.PurchaseDate.ToString("dd-MM-yyyy")
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+
+    <!-- STOCK REPORT -->
+    <div class="card shadow-sm border-0 mb-4 report-card">
+
+        <div class="card-header bg-white py-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <h5 class="mb-1">
+                        📦 Stock Report
+                    </h5>
+
+                    <small class="text-muted">
+                        Current inventory status
+                    </small>
+
+                </div>
+
+                <span class="badge bg-primary">
+                    @Model.Products.Count() Products
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            @if (!Model.Products.Any())
+            {
+                <div class="report-empty-state">
+
+                    <div class="report-empty-icon">
+                        📦
+                    </div>
+
+                    <h6>No Products Found</h6>
+
+                    <p class="text-muted mb-0">
+                        No products are available.
+                    </p>
+
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th class="ps-4">
+                                    Product
+                                </th>
+
+                                <th>
+                                    Current Stock
+                                </th>
+
+                                <th>
+                                    Reorder Level
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var product in Model.Products)
+                            {
+                                <tr>
+
+                                    <td class="ps-4 fw-semibold">
+                                        📦 @product.ProductName
+                                    </td>
+
+                                    <td>
+                                        @product.Quantity
+                                    </td>
+
+                                    <td>
+                                        @product.ReorderLevel
+                                    </td>
+
+                                    <td>
+
+                                        @if (product.Quantity <= product.ReorderLevel)
+                                        {
+                                            <span class="stock-status low">
+                                                ⚠️ Low Stock
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="stock-status available">
+                                                ✓ Available
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+
+    <!-- LOW STOCK REPORT -->
+    <div class="card shadow-sm border-0 mb-4 report-card">
+
+        <div class="card-header bg-white py-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <h5 class="mb-1">
+                        ⚠️ Low Stock Report
+                    </h5>
+
+                    <small class="text-muted">
+                        Products that need restocking
+                    </small>
+
+                </div>
+
+                <span class="badge bg-danger">
+                    @Model.LowStockProducts.Count() Low
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            @if (!Model.LowStockProducts.Any())
+            {
+                <div class="alert alert-success m-3 mb-0">
+                    ✓ All products have sufficient stock.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th class="ps-4">
+                                    Product
+                                </th>
+
+                                <th>
+                                    Current Quantity
+                                </th>
+
+                                <th>
+                                    Reorder Level
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var product in Model.LowStockProducts)
+                            {
+                                <tr>
+
+                                    <td class="ps-4 fw-semibold">
+                                        📦 @product.ProductName
+                                    </td>
+
+                                    <td class="text-danger fw-bold">
+                                        @product.Quantity
+                                    </td>
+
+                                    <td>
+                                        @product.ReorderLevel
+                                    </td>
+
+                                    <td>
+                                        <span class="stock-status low">
+                                            ⚠️ Low Stock
+                                        </span>
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+
+    <!-- STOCK MOVEMENT REPORT -->
+    <div class="card shadow-sm border-0 mb-4 report-card">
+
+        <div class="card-header bg-white py-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <h5 class="mb-1">
+                        🔄 Stock Movement Report
+                    </h5>
+
+                    <small class="text-muted">
+                        Stock IN and OUT activity
+                    </small>
+
+                </div>
+
+                <span class="badge bg-primary">
+                    @Model.StockMovements.Count() Records
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            @if (!Model.StockMovements.Any())
+            {
+                <div class="report-empty-state">
+
+                    <div class="report-empty-icon">
+                        🔄
+                    </div>
+
+                    <h6>No Stock Movements Found</h6>
+
+                    <p class="text-muted mb-0">
+                        No stock movements found for the selected period.
+                    </p>
+
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th class="ps-4">
+                                    Movement ID
+                                </th>
+
+                                <th>
+                                    Product
+                                </th>
+
+                                <th>
+                                    Movement Type
+                                </th>
+
+                                <th>
+                                    Quantity
+                                </th>
+
+                                <th>
+                                    Movement Date
+                                </th>
+
+                                <th>
+                                    Reference
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var movement in Model.StockMovements)
+                            {
+                                <tr>
+
+                                    <td class="ps-4 fw-semibold">
+                                        #@movement.StockMovementId
+                                    </td>
+
+                                    <td class="fw-semibold">
+                                        📦 @movement.Product?.ProductName
+                                    </td>
+
+                                    <td>
+
+                                        @if (movement.MovementType == "IN")
+                                        {
+                                            <span class="movement-badge movement-in">
+                                                📥 IN
+                                            </span>
+                                        }
+                                        else if (movement.MovementType == "OUT")
+                                        {
+                                            <span class="movement-badge movement-out">
+                                                📤 OUT
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="movement-badge movement-other">
+                                                @movement.MovementType
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                    <td class="fw-semibold">
+                                        @movement.Quantity
+                                    </td>
+
+                                    <td>
+                                        📅 @movement.MovementDate.ToString("dd-MM-yyyy")
+                                    </td>
+
+                                    <td>
+                                        @(string.IsNullOrEmpty(movement.Reference)
+                                            ? "-"
+                                            : movement.Reference)
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

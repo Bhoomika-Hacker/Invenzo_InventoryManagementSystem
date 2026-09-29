@@ -1,0 +1,61 @@
+﻿@model IEnumerable<InventoryManagementSystem.ViewModels.SaleItemVM>
+
+@{
+    ViewData["Title"] = "Sale Items";
+}
+
+<h1>Sale Items</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">
+        Create New Sale Item
+    </a>
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Sale Item ID</th>
+            <th>Sale ID</th>
+            <th>Product ID</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Total Price</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.SaleItemId</td>
+                <td>@item.SaleId</td>
+                <td>@item.ProductId</td>
+                <td>@item.Quantity</td>
+                <td>@item.UnitPrice</td>
+                <td>@item.TotalPrice</td>
+
+                <td>
+                    <a asp-action="Edit"
+                       asp-route-id="@item.SaleItemId"
+                       class="btn btn-sm btn-warning">
+                        Edit
+                    </a>
+
+                    <a asp-action="Details"
+                       asp-route-id="@item.SaleItemId"
+                       class="btn btn-sm btn-info">
+                        Details
+                    </a>
+
+                    <a asp-action="Delete"
+                       asp-route-id="@item.SaleItemId"
+                       class="btn btn-sm btn-danger">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,290 @@
+﻿@model IEnumerable<InventoryManagementSystem.ViewModels.SupplierVM>
+
+@{
+    ViewData["Title"] = "Suppliers";
+}
+
+<div class="supplier-page">
+
+    <!-- =========================
+         PAGE HEADER
+    ========================== -->
+
+    <div class="supplier-page-header">
+
+        <div>
+            <div class="supplier-title-row">
+                <div class="supplier-title-icon">
+                    ♙
+                </div>
+
+                <div>
+                    <h1>Suppliers</h1>
+                    <p>Manage your suppliers and their contact information.</p>
+                </div>
+            </div>
+        </div>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create"
+               class="supplier-create-btn">
+
+                <span>+</span>
+                Add Supplier
+
+            </a>
+        }
+
+    </div>
+
+
+    <!-- =========================
+         SUPPLIER SUMMARY
+    ========================== -->
+
+    <div class="supplier-summary">
+
+        <div class="supplier-summary-card">
+
+            <div class="supplier-summary-icon">
+                ♙
+            </div>
+
+            <div>
+                <span>Total Suppliers</span>
+                <strong>@Model.Count()</strong>
+            </div>
+
+        </div>
+
+        <div class="supplier-summary-text">
+            <span>Supplier Directory</span>
+            <p>All registered suppliers in your inventory system</p>
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         SUPPLIER TABLE CARD
+    ========================== -->
+
+    <div class="supplier-table-card">
+
+        <div class="supplier-table-header">
+
+            <div>
+                <h2>Supplier List</h2>
+                <p>View and manage supplier information</p>
+            </div>
+
+        </div>
+
+
+        @if (!Model.Any())
+        {
+            <!-- Empty State -->
+
+            <div class="supplier-empty-state">
+
+                <div class="supplier-empty-icon">
+                    ♙
+                </div>
+
+                <h3>No suppliers found</h3>
+
+                <p>
+                    There are currently no suppliers registered
+                    in the system.
+                </p>
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Create"
+                       class="supplier-create-btn">
+
+                        <span>+</span>
+                        Add First Supplier
+
+                    </a>
+                }
+
+            </div>
+        }
+        else
+        {
+            <div class="supplier-table-wrapper">
+
+                <table class="supplier-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Supplier</th>
+
+                            <th>Contact Number</th>
+
+                            <th>Email</th>
+
+                            <th>Address</th>
+
+                            <th class="supplier-actions-heading">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <!-- Supplier -->
+
+                                <td>
+
+                                    <div class="supplier-name-cell">
+
+                                        <div class="supplier-avatar">
+                                            @item.SupplierName?.Substring(0, 1).ToUpper()
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                @item.SupplierName
+                                            </strong>
+
+                                            <span>
+                                                Supplier
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Contact -->
+
+                                <td>
+
+                                    <div class="supplier-contact">
+
+                                        <span class="supplier-contact-icon">
+                                            ☎
+                                        </span>
+
+                                        <span>
+                                            @item.ContactNumber
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Email -->
+
+                                <td>
+
+                                    <div class="supplier-contact">
+
+                                        <span class="supplier-contact-icon">
+                                            ✉
+                                        </span>
+
+                                        <span>
+                                            @item.Email
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Address -->
+
+                                <td>
+
+                                    <div class="supplier-address">
+
+                                        <span class="supplier-address-icon">
+                                            ⌖
+                                        </span>
+
+                                        <span>
+                                            @item.Address
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Actions -->
+
+                                <td>
+
+                                    <div class="supplier-actions">
+
+                                        <!-- Details -->
+                                        <a asp-action="Details"
+                                           asp-route-id="@item.SupplierId"
+                                           class="supplier-action-btn details">
+
+                                            <span>◉</span>
+                                            Details
+
+                                        </a>
+
+
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <!-- Edit -->
+
+                                            <a asp-action="Edit"
+                                               asp-route-id="@item.SupplierId"
+                                               class="supplier-action-btn edit">
+
+                                                <span>✎</span>
+                                                Edit
+
+                                            </a>
+
+
+                                            <!-- Delete -->
+
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.SupplierId"
+                                               class="supplier-action-btn delete">
+
+                                                <span>×</span>
+                                                Delete
+
+                                            </a>
+                                        }
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</div>

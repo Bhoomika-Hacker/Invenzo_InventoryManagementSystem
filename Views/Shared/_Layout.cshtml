@@ -1,0 +1,478 @@
+@{
+    var area = ViewContext.RouteData.Values["area"]?.ToString();
+    var page = ViewContext.RouteData.Values["page"]?.ToString();
+
+    bool isAuthPage =
+        area == "Identity" &&
+        (
+            page == "/Account/Login" ||
+            page == "/Account/Register"
+        );
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - INVENZO
+    </title>
+
+    <script type="importmap"></script>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/InventoryManagementSystem.styles.css"
+          asp-append-version="true" />
+
+</head>
+
+
+<body class="@(isAuthPage ? "auth-layout-body" : "")">
+
+
+    @if (isAuthPage)
+    {
+        <!-- =====================================================
+             AUTHENTICATION PAGE
+             No Sidebar
+             No Header
+             No Search
+             No Footer
+        ====================================================== -->
+
+        <main class="auth-layout-content">
+
+            @RenderBody()
+
+        </main>
+    }
+    else
+    {
+        <!-- =====================================================
+             SIDEBAR
+        ====================================================== -->
+
+        <aside class="sidebar" id="sidebar">
+
+
+            <!-- =================================================
+                 BRAND
+            ================================================== -->
+
+            <div class="sidebar-brand">
+
+                <div class="brand-icon">
+                    ◈
+                </div>
+
+                <div class="brand-text">
+
+                    <span class="brand-title">
+                        INVENZO
+                    </span>
+
+                    <span class="brand-subtitle">
+                        INVENTORY MANAGEMENT
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 NAVIGATION
+            ================================================== -->
+
+            <nav class="sidebar-nav">
+
+
+                <!-- Dashboard -->
+
+                @if (User.IsInRole("Admin") || User.IsInRole("Seller"))
+                {
+                    <a asp-area=""
+                       asp-controller="Dashboard"
+                       asp-action="Index"
+                       class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")">
+
+                        <span class="sidebar-icon">
+                            ▦
+                        </span>
+
+                        <span class="sidebar-text">
+                            Dashboard
+                        </span>
+
+                    </a>
+                }
+
+
+                <!-- Products -->
+
+                @if (User.IsInRole("Admin") || User.IsInRole("Seller"))
+                {
+                    <a asp-area=""
+                       asp-controller="Product"
+                       asp-action="Index"
+                       class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Product" ? "active" : "")">
+
+                        <span class="sidebar-icon">
+                            □
+                        </span>
+
+                        <span class="sidebar-text">
+                            Products
+                        </span>
+
+                    </a>
+                }
+
+
+                <!-- Low Stock -->
+
+                @if (User.IsInRole("Admin") || User.IsInRole("Seller"))
+                {
+                    <a asp-area=""
+                       asp-controller="Product"
+                       asp-action="LowStock"
+                       class="sidebar-link @(ViewContext.RouteData.Values["action"]?.ToString() == "LowStock" ? "active" : "")">
+
+                        <span class="sidebar-icon">
+                            △
+                        </span>
+
+                        <span class="sidebar-text">
+                            Low Stock
+                        </span>
+
+                    </a>
+                }
+
+
+                <!-- Categories -->
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-area=""
+                       asp-controller="Category"
+                       asp-action="Index"
+                       class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Category" ? "active" : "")">
+
+                        <span class="sidebar-icon">
+                            ≡
+                        </span>
+
+                        <span class="sidebar-text">
+                            Categories
+                        </span>
+
+                    </a>
+                }
+
+
+                <!-- Suppliers -->
+
+                @if (User.IsInRole("Admin") || User.IsInRole("Seller"))
+                {
+                    <a asp-area=""
+                       asp-controller="Supplier"
+                       asp-action="Index"
+                       class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Supplier" ? "active" : "")">
+
+                        <span class="sidebar-icon">
+                            ♙
+                        </span>
+
+                        <span class="sidebar-text">
+                            Suppliers
+                        </span>
+
+                    </a>
+                }
+
+
+                <!-- Purchases -->
+
+                @if (User.IsInRole("Admin") || User.IsInRole("Seller"))
+                {
+                    <a asp-area=""
+                       asp-controller="Purchase"
+                       asp-action="Index"
+                       class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Purchase" ? "active" : "")">
+
+                        <span class="sidebar-icon">
+                            +
+                        </span>
+
+                        <span class="sidebar-text">
+                            Purchases
+                        </span>
+
+                    </a>
+                }
+
+
+                <!-- Sales -->
+
+                @if (User.IsInRole("Admin") || User.IsInRole("Seller"))
+                {
+                    <a asp-area=""
+                       asp-controller="Sale"
+                       asp-action="Index"
+                       class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Sale" ? "active" : "")">
+
+                        <span class="sidebar-icon">
+                            ₹
+                        </span>
+
+                        <span class="sidebar-text">
+                            Sales
+                        </span>
+
+                    </a>
+                }
+
+
+                <!-- Billing & Payments -->
+                @if (User.IsInRole("Admin") || User.IsInRole("Seller"))
+                {
+                    <a asp-controller="Billing" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Billing" ? "active" : "")"><span class="sidebar-icon">▣</span><span class="sidebar-text">Billing</span></a>
+                    <a asp-controller="Payment" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Payment" ? "active" : "")"><span class="sidebar-icon">✓</span><span class="sidebar-text">Payments</span></a>
+                    <a asp-controller="ZenoAI" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ZenoAI" ? "active" : "")"><span class="sidebar-icon">✦</span><span class="sidebar-text">ZenoAI</span></a>
+                }
+
+                <!-- Stock Movements -->
+
+                @if (User.IsInRole("Admin") || User.IsInRole("Seller"))
+                {
+                    <a asp-area=""
+                       asp-controller="StockMovement"
+                       asp-action="Index"
+                       class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "StockMovement" ? "active" : "")">
+
+                        <span class="sidebar-icon">
+                            ⇄
+                        </span>
+
+                        <span class="sidebar-text">
+                            Stock Movements
+                        </span>
+
+                    </a>
+                }
+
+
+                <!-- Reports -->
+
+                @if (User.IsInRole("Admin") || User.IsInRole("Seller"))
+                {
+                    <a asp-area=""
+                       asp-controller="Report"
+                       asp-action="Index"
+                       class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Report" ? "active" : "")">
+
+                        <span class="sidebar-icon">
+                            ◫
+                        </span>
+
+                        <span class="sidebar-text">
+                            Reports
+                        </span>
+
+                    </a>
+                }
+
+
+            </nav>
+
+
+            <!-- =================================================
+                 SIDEBAR BOTTOM
+            ================================================== -->
+
+            <div class="sidebar-bottom">
+
+                <div class="sidebar-divider"></div>
+
+                <div class="sidebar-version">
+                    INVENZO · v1.0
+                </div>
+
+            </div>
+
+        </aside>
+
+
+        <!-- =====================================================
+             MAIN WRAPPER
+        ====================================================== -->
+
+        <div class="main-wrapper">
+
+
+            <!-- =================================================
+                 TOP HEADER
+            ================================================== -->
+
+            <header class="top-header">
+
+
+                <!-- LEFT -->
+
+                <div class="header-left">
+
+                    <!-- Sidebar Toggle -->
+
+                    <button type="button"
+                            class="sidebar-toggle"
+                            id="sidebarToggle"
+                            title="Toggle Sidebar">
+
+                        ☰
+
+                    </button>
+
+                </div>
+
+
+                <!-- =================================================
+                     HEADER RIGHT
+                ================================================== -->
+
+                <div class="header-right">
+
+
+                    <!-- Notification -->
+
+                    <button type="button"
+                            class="header-icon-button"
+                            title="Notifications">
+
+                        ♧
+
+                        <span class="notification-dot"></span>
+
+                    </button>
+
+
+                    <!-- LOGIN PARTIAL -->
+
+                    <div class="login-partial-wrapper">
+
+                        <partial name="_LoginPartial" />
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- =================================================
+                 PAGE CONTENT
+            ================================================== -->
+
+            <main class="main-content">
+
+                @RenderBody()
+
+            </main>
+
+
+            <!-- =================================================
+                 FOOTER
+            ================================================== -->
+
+            <footer class="main-footer">
+
+                <div>
+                    © 2026 INVENZO.
+                    All rights reserved.
+                </div>
+
+                <div>
+                    Version 1.0.0
+                </div>
+
+            </footer>
+
+        </div>
+    }
+
+
+    <partial name="_ZenoAI" />
+
+    <!-- =========================================================
+         SCRIPTS
+    ========================================================== -->
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="~/js/site.js"
+            asp-append-version="true">
+    </script>
+
+
+    <!-- =========================================================
+         SIDEBAR TOGGLE
+    ========================================================== -->
+
+    @if (!isAuthPage)
+    {
+        <script>
+
+            document.addEventListener("DOMContentLoaded", function () {
+
+                const sidebarToggle =
+                    document.getElementById("sidebarToggle");
+
+                const sidebar =
+                    document.getElementById("sidebar");
+
+
+                if (sidebarToggle && sidebar) {
+
+                    sidebarToggle.addEventListener("click", function () {
+
+                        sidebar.classList.toggle(
+                            "sidebar-collapsed"
+                        );
+
+                    });
+
+                }
+
+            });
+
+        </script>
+    }
+
+
+    <!-- =========================================================
+         OPTIONAL PAGE SCRIPTS
+    ========================================================== -->
+
+    @await RenderSectionAsync(
+        "Scripts",
+        required: false
+    )
+
+</body>
+
+</html>

@@ -1,0 +1,665 @@
+
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using InventoryManagementSystem.Models
+@model InventoryManagementSystem.ViewModels.PurchaseVM
+
+@{
+    ViewData["Title"] = "Edit Purchase";
+
+    var purchaseItems = Model.PurchaseItems.ToList();
+
+    var products = ViewBag.Products as IEnumerable<Product>
+                   ?? new List<Product>();
+}
+
+<div class="purchase-edit-page">
+
+    <!-- Page Header -->
+    <div class="purchase-edit-header">
+
+        <div class="purchase-edit-title">
+
+            <div class="purchase-edit-title-icon">
+                ✎
+            </div>
+
+            <div>
+                <h1>Edit Purchase</h1>
+                <p>Update purchase information and item details.</p>
+            </div>
+
+        </div>
+
+        <a asp-action="Index"
+           class="purchase-edit-back-btn">
+            ← Back to Purchases
+        </a>
+
+    </div>
+
+
+    <!-- Main Card -->
+    <div class="purchase-edit-card">
+
+        <form asp-action="Edit" method="post">
+
+            <!-- Validation -->
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger purchase-edit-validation">
+            </div>
+
+            <!-- Purchase ID -->
+            <input type="hidden"
+                   asp-for="PurchaseId" />
+
+
+            <!-- ================= PURCHASE INFORMATION ================= -->
+
+            <div class="purchase-edit-section">
+
+                <div class="purchase-edit-section-heading">
+
+                    <div class="purchase-edit-section-icon">
+                        ℹ
+                    </div>
+
+                    <div>
+                        <h2>Purchase Information</h2>
+                        <p>Update the supplier and purchase date.</p>
+                    </div>
+
+                </div>
+
+
+                <div class="purchase-edit-info-grid">
+
+                    <!-- Supplier -->
+
+                    <div class="purchase-edit-field">
+
+                        <label asp-for="SupplierId">
+                            Supplier
+                        </label>
+
+                        <select asp-for="SupplierId"
+                                class="purchase-edit-input"
+                                asp-items="@(new SelectList(
+                                    ViewBag.Suppliers,
+                                    "SupplierId",
+                                    "SupplierName",
+                                    Model.SupplierId))">
+
+                            <option value="">
+                                -- Select Supplier --
+                            </option>
+
+                        </select>
+
+                        <span asp-validation-for="SupplierId"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <!-- Purchase Date -->
+
+                    <div class="purchase-edit-field">
+
+                        <label asp-for="PurchaseDate">
+                            Purchase Date
+                        </label>
+
+                        <input asp-for="PurchaseDate"
+                               type="date"
+                               class="purchase-edit-input" />
+
+                        <span asp-validation-for="PurchaseDate"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= PURCHASE ITEMS ================= -->
+
+            <div class="purchase-edit-section">
+
+                <div class="purchase-edit-section-heading">
+
+                    <div class="purchase-edit-section-icon">
+                        📦
+                    </div>
+
+                    <div>
+                        <h2>Purchase Items</h2>
+                        <p>Update products, quantities and pricing.</p>
+                    </div>
+
+                </div>
+
+
+                <div class="purchase-edit-items-wrapper">
+
+                    <table class="purchase-edit-items-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Product</th>
+
+                                <th>Quantity</th>
+
+                                <th>Purchase Price</th>
+
+                                <th>Total Price</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @for (
+                                int i = 0;
+                                i < purchaseItems.Count;
+                                i++)
+                            {
+
+                                <tr>
+
+                                    <!-- Product -->
+
+                                    <td>
+
+                                        <input type="hidden"
+                                               name="PurchaseItems[@i].PurchaseItemId"
+                                               value="@purchaseItems[i].PurchaseItemId" />
+
+                                        <input type="hidden"
+                                               name="PurchaseItems[@i].PurchaseId"
+                                               value="@purchaseItems[i].PurchaseId" />
+
+
+                                        <select name="PurchaseItems[@i].ProductId"
+                                                class="purchase-edit-item-input product-select"
+                                                data-index="@i"
+                                                required>
+
+                                            <option value="">
+                                                -- Select Product --
+                                            </option>
+
+
+                                            @foreach (var product in products)
+                                            {
+
+                                                if (product.ProductId ==
+                                                    purchaseItems[i].ProductId)
+                                                {
+
+                                                    <option value="@product.ProductId"
+                                                            data-price="@product.PurchasePrice"
+                                                            selected>
+
+                                                        @product.ProductName
+
+                                                    </option>
+
+                                                }
+                                                else
+                                                {
+
+                                                    <option value="@product.ProductId"
+                                                            data-price="@product.PurchasePrice">
+
+                                                        @product.ProductName
+
+                                                    </option>
+
+                                                }
+
+                                            }
+
+                                        </select>
+
+                                    </td>
+
+
+                                    <!-- Quantity -->
+
+                                    <td>
+
+                                        <input type="number"
+                                               name="PurchaseItems[@i].Quantity"
+                                               value="@purchaseItems[i].Quantity"
+                                               class="purchase-edit-item-input quantity"
+                                               data-index="@i"
+                                               min="1"
+                                               required />
+
+                                        <span class="text-danger small purchase-quantity-error" role="alert"></span>
+
+                                    </td>
+
+
+                                    <!-- Purchase Price -->
+
+                                    <td>
+
+                                        <div class="purchase-edit-price-wrapper">
+
+                                            <span>₹</span>
+
+                                            <input type="number"
+                                                   name="PurchaseItems[@i].UnitPrice"
+                                                   value="@purchaseItems[i].UnitPrice"
+                                                   class="purchase-edit-item-input unit-price"
+                                                   data-index="@i"
+                                                   step="0.01"
+                                                   min="0.01"
+                                                   readonly />
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- Total Price -->
+
+                                    <td>
+
+                                        <div class="purchase-edit-price-wrapper">
+
+                                            <span>₹</span>
+
+                                            <input type="number"
+                                                   name="PurchaseItems[@i].TotalPrice"
+                                                   value="@purchaseItems[i].TotalPrice"
+                                                   class="purchase-edit-item-input total-price"
+                                                   data-index="@i"
+                                                   step="0.01"
+                                                   readonly />
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= GRAND TOTAL ================= -->
+
+            <div class="purchase-edit-total-section">
+
+                <div class="purchase-edit-total-content">
+
+                    <div>
+
+                        <span class="purchase-edit-total-label">
+                            Grand Total
+                        </span>
+
+                        <p>
+                            Total value of this purchase
+                        </p>
+
+                    </div>
+
+
+                    <div class="purchase-edit-grand-total">
+
+                        <span>₹</span>
+
+                        <input asp-for="TotalAmount"
+                               id="grandTotal"
+                               class="purchase-edit-total-input"
+                               readonly />
+
+                    </div>
+
+                </div>
+
+
+                <span asp-validation-for="TotalAmount"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+
+            <!-- ================= BUTTONS ================= -->
+
+            <div class="purchase-edit-footer">
+
+                <a asp-action="Index"
+                   class="purchase-edit-cancel-btn">
+                    Cancel
+                </a>
+
+                <button type="submit"
+                        class="purchase-edit-save-btn">
+                    ✓ Save Changes
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync(
+            "_ValidationScriptsPartial");
+    }
+
+
+    <script>
+
+        // ==========================================
+        // PRODUCT CHANGE
+        // ==========================================
+
+        document
+            .querySelectorAll(".product-select")
+            .forEach(function (select) {
+
+                select.addEventListener(
+                    "change",
+                    function () {
+
+                        let index =
+                            this.dataset.index;
+
+
+                        let selectedOption =
+                            this.options[
+                                this.selectedIndex
+                            ];
+
+
+                        let unitPriceElement =
+                            document.querySelector(
+                                '.unit-price[data-index="' +
+                                index +
+                                '"]'
+                            );
+
+
+                        let totalPriceElement =
+                            document.querySelector(
+                                '.total-price[data-index="' +
+                                index +
+                                '"]'
+                            );
+
+
+                        let quantityElement =
+                            document.querySelector(
+                                '.quantity[data-index="' +
+                                index +
+                                '"]'
+                            );
+
+
+                        if (!selectedOption.value) {
+
+                            unitPriceElement.value = "";
+
+                            totalPriceElement.value = "";
+
+                            calculateGrandTotal();
+
+                            return;
+                        }
+
+
+                        // Get Product Purchase Price
+
+                        let price =
+                            parseFloat(
+                                selectedOption.dataset.price
+                            ) || 0;
+
+
+                        // Set Purchase Price
+
+                        unitPriceElement.value =
+                            price.toFixed(2);
+
+
+                        let quantity =
+                            parseFloat(
+                                quantityElement.value
+                            ) || 0;
+
+
+                        let total =
+                            quantity * price;
+
+
+                        totalPriceElement.value =
+                            total.toFixed(2);
+
+
+                        calculateGrandTotal();
+
+                    }
+                );
+
+            });
+
+
+        // ==========================================
+        // PURCHASE QUANTITY VALIDATION
+        document.addEventListener("input", function (event) {
+            if (event.target.classList.contains("quantity")) {
+                const quantity = parseInt(event.target.value);
+                const error = event.target.closest("tr")?.querySelector(".purchase-quantity-error");
+                if (Number.isNaN(quantity) || quantity < 0) {
+                    event.target.setCustomValidity("Purchase quantity must be greater than or equal to 0.");
+                    if (error) error.textContent = "Quantity must be greater than or equal to 0.";
+                } else {
+                    event.target.setCustomValidity("");
+                    if (error) error.textContent = "";
+                }
+            }
+        });
+
+        // QUANTITY CHANGE
+        // ==========================================
+
+        document
+            .querySelectorAll(".quantity")
+            .forEach(function (element) {
+
+                element.addEventListener(
+                    "input",
+                    function () {
+
+                        calculateTotal(
+                            this.dataset.index
+                        );
+
+                    }
+                );
+
+            });
+
+
+        // ==========================================
+        // CALCULATE ITEM TOTAL
+        // ==========================================
+
+        function calculateTotal(index) {
+
+            let quantityElement =
+                document.querySelector(
+                    '.quantity[data-index="' +
+                    index +
+                    '"]'
+                );
+
+
+            let unitPriceElement =
+                document.querySelector(
+                    '.unit-price[data-index="' +
+                    index +
+                    '"]'
+                );
+
+
+            let totalPriceElement =
+                document.querySelector(
+                    '.total-price[data-index="' +
+                    index +
+                    '"]'
+                );
+
+
+            let quantity =
+                parseFloat(
+                    quantityElement.value
+                ) || 0;
+
+
+            let unitPrice =
+                parseFloat(
+                    unitPriceElement.value
+                ) || 0;
+
+
+            let total =
+                quantity * unitPrice;
+
+
+            totalPriceElement.value =
+                total.toFixed(2);
+
+
+            calculateGrandTotal();
+
+        }
+
+
+        // ==========================================
+        // GRAND TOTAL
+        // ==========================================
+
+        function calculateGrandTotal() {
+
+            let grandTotal = 0;
+
+
+            document
+                .querySelectorAll(".total-price")
+                .forEach(function (element) {
+
+                    grandTotal +=
+                        parseFloat(element.value) || 0;
+
+                });
+
+
+            document.getElementById(
+                "grandTotal"
+            ).value =
+                grandTotal.toFixed(2);
+
+        }
+
+
+        // ==========================================
+        // PAGE LOAD
+        // ==========================================
+
+        document
+            .querySelectorAll(".product-select")
+            .forEach(function (select) {
+
+                let index =
+                    select.dataset.index;
+
+
+                let selectedOption =
+                    select.options[
+                        select.selectedIndex
+                    ];
+
+
+                if (selectedOption &&
+                    selectedOption.value) {
+
+                    let price =
+                        parseFloat(
+                            selectedOption.dataset.price
+                        ) || 0;
+
+
+                    let unitPriceElement =
+                        document.querySelector(
+                            '.unit-price[data-index="' +
+                            index +
+                            '"]'
+                        );
+
+
+                    unitPriceElement.value =
+                        price.toFixed(2);
+
+                }
+
+
+                calculateTotal(index);
+
+            });
+
+
+        calculateGrandTotal();
+
+        document.querySelector("form")?.addEventListener("submit", function (event) {
+            let invalid = false;
+
+            this.querySelectorAll(".quantity").forEach(function (field) {
+                const quantity = parseInt(field.value);
+                const error = field.closest("tr")?.querySelector(".purchase-quantity-error");
+
+                if (Number.isNaN(quantity) || quantity < 0) {
+                    field.setCustomValidity("Purchase quantity must be greater than or equal to 0.");
+                    if (error) error.textContent = "Quantity must be greater than or equal to 0.";
+                    invalid = true;
+                } else {
+                    field.setCustomValidity("");
+                    if (error) error.textContent = "";
+                }
+            });
+
+            if (invalid) {
+                event.preventDefault();
+                this.reportValidity();
+            }
+        });
+
+    </script>
+}

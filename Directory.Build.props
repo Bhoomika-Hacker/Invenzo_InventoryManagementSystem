@@ -1,0 +1,20 @@
+<Project>
+  <!-- Keep build output on D: when available and isolate each project to prevent
+       the application and xUnit test project from overwriting each other's DLLs. -->
+  <PropertyGroup Condition="Exists('D:\')">
+    <BaseOutputPath>D:\InvenzoBuild\$(MSBuildProjectName)\bin\</BaseOutputPath>
+    <BaseIntermediateOutputPath>D:\InvenzoBuild\$(MSBuildProjectName)\obj\</BaseIntermediateOutputPath>
+  </PropertyGroup>
+
+  <!-- NuGet audit is optional; disabling it avoids NU1900 when api.nuget.org is unavailable. -->
+  <PropertyGroup>
+    <NuGetAudit>false</NuGetAudit>
+  </PropertyGroup>
+
+  <!-- Stop a stale local Invenzo process before building so Windows cannot lock its DLL. -->
+  <Target Name="StopInvenzoBeforeBuild" BeforeTargets="PrepareForBuild" Condition="'$(OS)' == 'Windows_NT'">
+    <Exec
+      Command='powershell -NoProfile -ExecutionPolicy Bypass -Command "$p = Get-Process -Name InventoryManagementSystem -ErrorAction SilentlyContinue; if ($p) { $p | Stop-Process -Force -ErrorAction SilentlyContinue }; exit 0"'
+      IgnoreExitCode="true" />
+  </Target>
+</Project>

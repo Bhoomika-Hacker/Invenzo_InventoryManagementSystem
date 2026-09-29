@@ -1,0 +1,299 @@
+﻿@model IEnumerable<InventoryManagementSystem.ViewModels.SaleVM>
+
+@{
+    ViewData["Title"] = "Sales";
+}
+
+<div class="sale-page">
+
+    <!-- ================= PAGE HEADER ================= -->
+
+    <div class="sale-page-header">
+
+        <div class="sale-title-row">
+
+            <div class="sale-title-icon">
+                ₹
+            </div>
+
+            <div>
+                <h1>Sales</h1>
+
+                <p>
+                    Manage sales transactions and customer orders.
+                </p>
+            </div>
+
+        </div>
+
+
+        <a asp-action="Create"
+           class="sale-create-btn">
+
+            <span>+</span>
+            Create Sale
+
+        </a>
+
+    </div>
+
+
+    <!-- ================= SUMMARY ================= -->
+
+    <div class="sale-summary">
+
+        <div class="sale-summary-card">
+
+            <div class="sale-summary-icon">
+                ₹
+            </div>
+
+            <div>
+
+                <span>Total Sales</span>
+
+                <strong>
+                    @Model.Count()
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="sale-summary-text">
+
+            <span>Sales Transactions</span>
+
+            <p>
+                Latest sales records in your inventory
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= SALES TABLE ================= -->
+
+    <div class="sale-table-card">
+
+        <div class="sale-table-header">
+
+            <div>
+
+                <h2>Sales List</h2>
+
+                <p>
+                    View and manage all sales transactions
+                </p>
+
+            </div>
+
+        </div>
+
+
+        @if (!Model.Any())
+        {
+            <!-- ================= EMPTY STATE ================= -->
+
+            <div class="sale-empty-state">
+
+                <div class="sale-empty-icon">
+                    ₹
+                </div>
+
+                <h3>
+                    No sales found
+                </h3>
+
+                <p>
+                    There are currently no sales transactions
+                    recorded in the system.
+                </p>
+
+                <a asp-action="Create"
+                   class="sale-create-btn">
+
+                    <span>+</span>
+                    Create First Sale
+
+                </a>
+
+            </div>
+        }
+        else
+        {
+            <!-- ================= TABLE ================= -->
+
+            <div class="sale-table-wrapper">
+
+                <table class="sale-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Sale
+                            </th>
+
+                            <th>
+                                Sale Date
+                            </th>
+
+                            <th>
+                                Total Amount
+                            </th>
+
+                            <th>
+                                Items
+                            </th>
+
+                            <th class="sale-actions-heading">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var sale in Model)
+                        {
+
+                            <tr>
+
+                                <!-- Sale -->
+
+                                <td>
+
+                                    <div class="sale-id-cell">
+
+                                        <div class="sale-id-icon">
+                                            #
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                Sale #@sale.SaleId
+                                            </strong>
+
+                                            <span>
+                                                Sales transaction
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Date -->
+
+                                <td>
+
+                                    <div class="sale-date">
+
+                                        <span class="sale-date-icon">
+                                            📅
+                                        </span>
+
+                                        <span>
+                                            @sale.SaleDate.ToString("dd-MM-yyyy")
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Amount -->
+
+                                <td>
+
+                                    <div class="sale-amount">
+
+                                        ₹@sale.TotalAmount.ToString("N2")
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Items -->
+
+                                <td>
+
+                                    <div class="sale-items-count">
+
+                                        <span class="sale-items-icon">
+                                            📦
+                                        </span>
+
+                                        <span>
+                                            @(sale.SaleItems?.Count ?? 0)
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Actions -->
+
+                                <td>
+
+                                    <div class="sale-actions">
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@sale.SaleId"
+                                           class="sale-action-btn details">
+
+                                            <span>◉</span>
+                                            Details
+
+                                        </a>
+
+
+                                        <a asp-action="Edit"
+                                           asp-route-id="@sale.SaleId"
+                                           class="sale-action-btn edit">
+
+                                            <span>✎</span>
+                                            Edit
+
+                                        </a>
+
+
+                                        <a asp-action="Delete"
+                                           asp-route-id="@sale.SaleId"
+                                           class="sale-action-btn delete">
+
+                                            <span>×</span>
+                                            Delete
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</div>

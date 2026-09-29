@@ -1,0 +1,187 @@
+@page
+@model RegisterModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="auth-page reference-register-page">
+
+    <!-- =====================================================
+         LEFT SIDE
+    ====================================================== -->
+
+    <div class="auth-left reference-register-visual" aria-label="Invenzo inventory management">
+    </div>
+
+
+    <!-- =====================================================
+         RIGHT SIDE
+    ====================================================== -->
+
+    <div class="auth-right">
+
+        <div class="auth-card">
+
+            <!-- LOGIN LINK -->
+            <div class="auth-card-top">
+
+                <span>
+                    Already have an account?
+                </span>
+
+                <a asp-page="./Login">
+                    Login
+                </a>
+
+            </div>
+
+            <!-- LOGO + WELCOME BACK -->
+            <div class="auth-card-logo">
+                ◇
+            </div>
+
+            <h2>Welcome Back</h2>
+
+            <p class="auth-card-subtitle">
+                Create your Invenzo account
+            </p>
+
+            <!-- =================================================
+                 REGISTER FORM
+            ================================================== -->
+
+            <form id="registerForm"
+                  asp-route-returnUrl="@Model.ReturnUrl"
+                  method="post"
+                  class="auth-form">
+
+
+                <!-- VALIDATION -->
+
+                <div asp-validation-summary="ModelOnly"
+                     class="auth-validation"
+                     role="alert">
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="auth-form-group">
+
+                    <label asp-for="Input.Email">
+                        Email Address
+                    </label>
+
+                    <div class="auth-input-wrapper">
+
+                        <span class="auth-input-icon">
+                            ✉
+                        </span>
+
+                        <input asp-for="Input.Email"
+                               autocomplete="username"
+                               aria-required="true"
+                               placeholder="Enter your email" />
+
+                    </div>
+
+                    <span asp-validation-for="Input.Email"
+                          class="auth-field-error">
+                    </span>
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div class="auth-form-group">
+
+                    <label asp-for="Input.Password">
+                        Password
+                    </label>
+
+                    <div class="auth-input-wrapper">
+
+                        <span class="auth-input-icon">
+                            🔒
+                        </span>
+
+                        <input asp-for="Input.Password"
+                               autocomplete="new-password"
+                               aria-required="true"
+                               placeholder="Create a password" />
+
+                    </div>
+
+                    <span asp-validation-for="Input.Password"
+                          class="auth-field-error">
+                    </span>
+
+                </div>
+
+
+                <!-- CONFIRM PASSWORD -->
+
+                <div class="auth-form-group">
+
+                    <label asp-for="Input.ConfirmPassword">
+                        Confirm Password
+                    </label>
+
+                    <div class="auth-input-wrapper">
+
+                        <span class="auth-input-icon">
+                            🔒
+                        </span>
+
+                        <input asp-for="Input.ConfirmPassword"
+                               autocomplete="new-password"
+                               aria-required="true"
+                               placeholder="Confirm your password" />
+
+                    </div>
+
+                    <span asp-validation-for="Input.ConfirmPassword"
+                          class="auth-field-error">
+                    </span>
+
+                </div>
+
+                <!-- SELLER ACCOUNT -->
+                <div class="seller-info reference-seller-info">
+                    <div class="seller-icon">🏪</div>
+                    <div>
+                        <strong>Seller Account</strong>
+                        <span>Your account will be created with Seller access.</span>
+                    </div>
+                </div>
+
+                <!-- REGISTER BUTTON -->
+
+                <button id="registerSubmit"
+                        type="submit"
+                        class="auth-submit">
+
+                    Create Account
+
+                    <span>
+                        →
+                    </span>
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+}

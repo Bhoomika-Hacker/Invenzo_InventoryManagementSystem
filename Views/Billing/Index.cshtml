@@ -1,0 +1,8 @@
+@model IEnumerable<InventoryManagementSystem.Models.Billing>
+@{ ViewData["Title"]="Billing"; var bills=Model.ToList(); var paid=bills.Where(b=>b.Status=="Paid").Sum(b=>b.GrandTotal); var outstanding=bills.Where(b=>b.Status!="Paid").Sum(b=>b.GrandTotal); }
+<div class="feature-page"><div class="feature-header"><div><div class="feature-eyebrow">FINANCE</div><h1>Billing</h1><p>Invoices are created automatically whenever a Seller records a sale.</p></div><a asp-controller="Sale" asp-action="Index" class="btn btn-primary">View Sales</a></div>
+<div class="feature-stats"><div class="feature-stat"><span>Total Invoices</span><strong>@bills.Count</strong></div><div class="feature-stat"><span>Paid</span><strong>₹@paid.ToString("N2")</strong></div><div class="feature-stat"><span>Outstanding</span><strong>₹@outstanding.ToString("N2")</strong></div></div>
+<div class="feature-card"><div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th>Invoice</th><th>Sale</th><th>Date</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody>
+@foreach(var b in bills){<tr><td><strong>@b.InvoiceNumber</strong><div class="text-muted small">@b.CustomerName</div></td><td>Sale #@b.SaleId</td><td>@b.IssueDate.ToString("dd MMM yyyy")</td><td class="fw-semibold">₹@b.GrandTotal.ToString("N2")</td><td><span class="status-pill @(b.Status=="Paid"?"paid":"unpaid")">@b.Status</span></td><td class="text-end"><a asp-action="Details" asp-route-id="@b.BillingId" class="btn btn-sm btn-outline-primary">Invoice / Payment</a></td></tr>}
+@if(!bills.Any()){<tr><td colspan="6" class="text-center py-5 text-muted">No invoices yet. Create a sale and the invoice will appear automatically.</td></tr>}
+</tbody></table></div></div></div>

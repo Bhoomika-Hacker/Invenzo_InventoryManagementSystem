@@ -1,0 +1,47 @@
+﻿@model IEnumerable<InventoryManagementSystem.Models.Product>
+
+@{
+    ViewData["Title"] = "Low Stock Products";
+}
+
+<h1>Low Stock Products</h1>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-success">
+        All products have sufficient stock.
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">
+        ⚠️ These products are low in stock.
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Current Quantity</th>
+                <th>Reorder Level</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <tr>
+                    <td>@product.ProductName</td>
+                    <td>@product.Quantity</td>
+                    <td>@product.ReorderLevel</td>
+                    <td>
+                        <span class="badge bg-danger">
+                            Low Stock
+                        </span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

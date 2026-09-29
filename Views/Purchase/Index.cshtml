@@ -1,0 +1,329 @@
+﻿@model IEnumerable<InventoryManagementSystem.ViewModels.PurchaseVM>
+
+@{
+    ViewData["Title"] = "Purchases";
+}
+
+<div class="purchase-page">
+
+    <!-- =========================
+         PAGE HEADER
+    ========================== -->
+
+    <div class="purchase-page-header">
+
+        <div class="purchase-title-row">
+
+            <div class="purchase-title-icon">
+                🛒
+            </div>
+
+            <div>
+                <h1>Purchases</h1>
+
+                <p>
+                    Manage purchase transactions and supplier orders.
+                </p>
+            </div>
+
+        </div>
+
+
+        @* Create Purchase - Admin Only *@
+
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create"
+               class="purchase-create-btn">
+
+                <span>+</span>
+                Create Purchase
+
+            </a>
+        }
+
+    </div>
+
+
+    <!-- =========================
+         SUMMARY
+    ========================== -->
+
+    <div class="purchase-summary">
+
+        <div class="purchase-summary-card">
+
+            <div class="purchase-summary-icon">
+                🛒
+            </div>
+
+            <div>
+
+                <span>Total Purchases</span>
+
+                <strong>
+                    @Model.Count()
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="purchase-summary-text">
+
+            <span>Purchase Transactions</span>
+
+            <p>
+                Latest purchase records in your inventory
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         PURCHASE TABLE
+    ========================== -->
+
+    <div class="purchase-table-card">
+
+
+        <!-- TABLE HEADER -->
+
+        <div class="purchase-table-header">
+
+            <div>
+
+                <h2>Purchase List</h2>
+
+                <p>
+                    View and manage all purchase transactions
+                </p>
+
+            </div>
+
+        </div>
+
+
+        @if (!Model.Any())
+        {
+            <!-- =========================
+                 EMPTY STATE
+            ========================== -->
+
+            <div class="purchase-empty-state">
+
+                <div class="purchase-empty-icon">
+                    🛒
+                </div>
+
+                <h3>No purchases found</h3>
+
+                <p>
+                    There are currently no purchase transactions
+                    recorded in the system.
+                </p>
+
+
+                @* Create First Purchase - Admin Only *@
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Create"
+                       class="purchase-create-btn">
+
+                        <span>+</span>
+                        Create First Purchase
+
+                    </a>
+                }
+
+            </div>
+        }
+        else
+        {
+            <!-- =========================
+                 TABLE
+            ========================== -->
+
+            <div class="purchase-table-wrapper">
+
+                <table class="purchase-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Purchase</th>
+
+                            <th>Supplier</th>
+
+                            <th>Purchase Date</th>
+
+                            <th>Total Amount</th>
+
+                            <th class="purchase-actions-heading">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <!-- Purchase ID -->
+
+                                <td>
+
+                                    <div class="purchase-id-cell">
+
+                                        <div class="purchase-id-icon">
+                                            #
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                Purchase #@item.PurchaseId
+                                            </strong>
+
+                                            <span>
+                                                Purchase transaction
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Supplier -->
+
+                                <td>
+
+                                    <div class="purchase-supplier">
+
+                                        <div class="purchase-supplier-icon">
+                                            ♙
+                                        </div>
+
+                                        <span>
+                                            @(item.Supplier?.SupplierName ?? "N/A")
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Date -->
+
+                                <td>
+
+                                    <div class="purchase-date">
+
+                                        <span class="purchase-date-icon">
+                                            📅
+                                        </span>
+
+                                        <span>
+                                            @item.PurchaseDate.ToString("dd-MM-yyyy")
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Total Amount -->
+
+                                <td>
+
+                                    <div class="purchase-amount">
+
+                                        ₹@item.TotalAmount.ToString("N2")
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Actions -->
+
+                                <td>
+
+                                    <div class="purchase-actions">
+
+
+                                        @* =========================
+                                           DETAILS
+                                           Admin + Seller
+                                           ========================= *@
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@item.PurchaseId"
+                                           class="purchase-action-btn details">
+
+                                            <span>◉</span>
+                                            Details
+
+                                        </a>
+
+
+                                        @* =========================
+                                           EDIT + DELETE
+                                           Admin Only
+                                           ========================= *@
+
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <!-- Edit -->
+
+                                            <a asp-action="Edit"
+                                               asp-route-id="@item.PurchaseId"
+                                               class="purchase-action-btn edit">
+
+                                                <span>✎</span>
+                                                Edit
+
+                                            </a>
+
+
+                                            <!-- Delete -->
+
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.PurchaseId"
+                                               class="purchase-action-btn delete">
+
+                                                <span>×</span>
+                                                Delete
+
+                                            </a>
+                                        }
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</div>
